@@ -1,0 +1,17 @@
+{
+    "name": "prescriptions",
+    "description": "An application to digitalise prescriptions",
+    "version": "0.0.0",
+    "homepage": "",
+    "license": "MIT",
+    "private": true,
+    "dependencies": {
+        "angular": "latest",
+        "angular-mocks": "latest",
+        "jquery": "latest",
+        "bootstrap": "latest",
+        "angular-route": "latest",
+        "angular-resource": "latest",
+        "angular-animate": "latest"
+    }
+}

@@ -10,14 +10,15 @@
                 username: '',
                 password: ''
             };
+            scope.isLoginPage = true;
 
-            scope.login = function(credentials) {
-                AuthenticationService.login(credentials).then(function(loginObj) {
-
-                    if (!loginObj || !loginObj.isSuccess) {
+            scope.login = function() {
+                AuthenticationService.login(scope.credentials).then(function(loginObj) {
+                    if (!loginObj || !loginObj.authToken) {
                         scope.loginError = true;
                     } else {
                         user = loginObj.user;
+                        console.log(user);
                         $location.path('/myProfile');
                     }
                 });
