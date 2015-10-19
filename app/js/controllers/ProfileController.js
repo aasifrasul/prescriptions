@@ -2,21 +2,22 @@
 
     'use strict';
 
-    presApp.controller('ProfileController', ['$scope', '$location', 'UsersService',
-        function(scope, location, UsersService) {
+    presApp.controller('ProfileController', ['$scope', '$location', 'UsersService', 'SessionService',
+        function($scope, $location, UsersService, SessionService) {
 
-            scope.user = UsersService.fetchCurrentUser();
-            console.log(scope.user);
-
-            if (!scope.user) {
-                location.path('/login');
+            $scope.updateProfile = function() {
+                console.log($scope.user);
+                UsersService.updateUser($scope.user).then(function(response) {
+                    SessionService.setUser(response.user);
+                    console.log(response);
+                });
             }
 
-            scope.updateProfile = function() {
-            	console.log(scope.user);
-                UsersService.updateUser(scope.user);
-            }
+            $scope.showscope = function(e) {
+                console.log(angular.element(e.srcElement).$scope());
+            };
 
+            console.log($scope);
         }
     ]);
 

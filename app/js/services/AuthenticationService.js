@@ -1,25 +1,18 @@
 (function() {
 
+    'use strict';
+
     presApp.factory("AuthenticationService", ['$http', '$q', '$window', '$injector',
         function($http, $q, $window, $injector) {
-            var userInfo = {},
-                currentUser,
-                authService = {},
-                baseUrl = $injector.get('baseUrl');
+            var userInfo = null,
+                authenticatedUser = null,
+                authService = {};
 
             authService.login = function(payload) {
                 var deferred = $q.defer();
 
                 $http.post("login", payload).then(function(result) {
-                    userInfo = {
-                        authToken: result.authToken,
-                        username: result.username
-                    };
-
-                    currentUser = result.user;
-                    $window.sessionStorage["userInfo"] = JSON.stringify(userInfo);
-                    $window.sessionStorage["currentUser"] = JSON.stringify(currentUser);
-                    deferred.resolve(userInfo);
+                    deferred.resolve(result);
                 }, function(error) {
                     deferred.reject(error);
                 });
@@ -40,29 +33,43 @@
             }
 
             authService.register = function(payload) {
-                http.post("register", payload).then(function(result) {
-                    console.log(result);
+                var deferred = $q.defer();
 
+                http.post("register", payload).then(function(result) {
                     if (result.errors) {
+                        deferred.reject(error);
                         console.log(result.errors);
                     } else {
+                        deferred.resolve(result);
                         $location.path('/login');
                     }
 
                 });
+
+                return deferred.promise;
             };
 
-            authService.getCurrentUser = function() {
-
-                if (angular.isUndefined(currentUser)) {
-                    currentUser = $window.sessionStorage["currentUser"];
+            authService.getAuthenticatedUser = function() {
+                if (!_.isObject(authenticatedUser)) {
+                    authenticatedUser = $window.sessionStorage["authenticatedUser"];
+                    authenticatedUser = (authenticatedUser) ? JSON.parse(authenticatedUser) : null;
                 }
 
-                return currentUser;
+                return authenticatedUser;
             }
 
-            authService.isAuthenticated = function() {
-                return !!authService.userInfo.authToken;
+            authService.getUserInfo = function() {
+                if (!_.isObject(userInfo)) {
+                    userInfo = $window.sessionStorage["userInfo"];
+                    userInfo = (userInfo) ? JSON.parse(userInfo) : null;
+                }
+
+                return userInfo;
+            }
+
+            authService.isLoggedIn = function() {
+                var userInfo = authService.getUserInfo();
+                return (userInfo && userInfo.authToken) ? true : false;
             };
 
             return authService;

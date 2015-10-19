@@ -2,9 +2,7 @@
 
 var presApp = angular.module('presApp', [
     'ngRoute',
-    'restangular',
-    'ngResource',
-    'LocalStorageModule'
+    'ui.bootstrap.modal'
 ]);
 
 (function() {
@@ -36,37 +34,76 @@ var presApp = angular.module('presApp', [
 
         function($routeProvider) {
             $routeProvider.
-            when('/', {
+            when('/home', {
+                templateUrl: 'views/home.html',
+                controller: 'HomeController',
+                requireLogin: false
+            }).
+            when('/login', {
                 templateUrl: 'views/login.html',
-                controller: 'LoginController'
+                controller: 'LoginController',
+                requireLogin: false
             }).
             when('/register', {
                 templateUrl: 'views/register.html',
-                controller: 'RegisterController'
+                controller: 'RegisterController',
+                requireLogin: false
+            }).
+            when('/contactus', {
+                templateUrl: 'views/contactus.html',
+                controller: 'RegisterController',
+                requireLogin: false
             }).
             when('/forgotPassword', {
                 templateUrl: 'views/forgotpassword.html',
-                controller: 'ForgotPasswordController'
+                controller: 'ForgotPasswordController',
+                requireLogin: true
             }).
             when('/myProfile', {
                 templateUrl: 'views/myprofile.html',
-                controller: 'ProfileController'
+                controller: 'ProfileController',
+                requireLogin: true
             }).
             when('/prescriptions', {
                 templateUrl: 'views/prescriptions.html',
-                controller: 'PrescriptionsController'
+                controller: 'PrescriptionsController',
+                requireLogin: true
             }).
             when('/prescriptions/:prescriptionId', {
                 templateUrl: 'views/prescription-detail.html',
-                controller: 'PrescriptionsDetailController'
+                controller: 'PrescriptionsDetailController',
+                requireLogin: true
             }).
             otherwise({
                 redirectTo: '/'
             });
         }
     ]);
+/*
+    presApp.config(['$routeProvider',
+        function($routeProvider) {
+            var injector = angular.injector(['ng', 'presApp']);
+            $rootScope = injector.get('$rootScope');
+            location = injector.get('$location');
 
-    presApp.config(['RestangularProvider',
+            $rootScope.$on("$routeChangeStart", function(event, next, current) {
+                if (next.requireLogin) {
+                    var AuthenticationService = injector.get('AuthenticationService');
+
+                    if (!AuthenticationService.isLoggedIn()) {
+                        console.log('DENY');
+                        event.preventDefault();
+                        $location.path('/login');
+                    } else {
+                        console.log('ALLOW');
+                        $location.path('/home');
+                    }
+                }
+            });
+        }
+    ]);
+*/
+    /*presApp.config(['RestangularProvider',
         function(RestangularProvider) {
 
             if (window.location.hostname == "localhost") {
@@ -76,8 +113,9 @@ var presApp = angular.module('presApp', [
                 baseUrl = deployedAt + "/api/rest/";
             }
 
-            RestangularProvider.setBaseUrl(baseUrl);
-            /*RestangularProvider.setExtraFields(['name']);
+            var baseUrl = RestangularProvider.setBaseUrl(baseUrl);
+            console.log(baseUrl);
+            RestangularProvider.setExtraFields(['name']);
             RestangularProvider.setResponseExtractor(function(response, operation) {
                 return response.data;
             });
@@ -120,19 +158,19 @@ var presApp = angular.module('presApp', [
                     headers: headers,
                     httpConfig: httpConfig
                 };
-            });*/
+            });
 
         }
-    ]);
+    ]);*/
 
-    presApp.config(['localStorageServiceProvider',
+    /*presApp.config(['localStorageServiceProvider',
         function(localStorageServiceProvider) {
             localStorageServiceProvider
                 .setPrefix('pres')
                 .setStorageType('localStorage')
                 .setNotify(false, false);
         }
-    ]);
+    ]);*/
 
     presApp.config(['$httpProvider',
         function(httpProvider) {
@@ -142,30 +180,30 @@ var presApp = angular.module('presApp', [
         }
     ]);
 
-    presApp.config(['$httpProvider', '$locationProvider',
-        function(httpProvider, locationProvider) {
-            //httpProvider.responseInterceptors.push(presApp.errorCheckInterceptor);
-        }
-    ]);
-
     presApp.config(['$provide', '$httpProvider',
         function($provide, $httpProvider) {
+            //delete $httpProvider.defaults.headers.common['X-Requested-With'];
 
             // Intercept http calls.
-            $provide.factory('MyHttpInterceptor', ['$q', '$window',
-                function($q, $window) {
+            $provide.factory('MyHttpInterceptor', ['$q', '$window', '$injector', 'SessionService',
+                function($q, $window, $injector, SessionService) {
                     return {
                         // On request success
                         request: function(config) {
-                            var userInfo = JSON.parse($window.sessionStorage["userInfo"]);
-                           
-                            if (userInfo && userInfo.authToken) {
-                                config.headers['x-session-token'] = userInfo.authToken;
+                            //var injector = angular.injector(['ng', 'presApp']);
+                            //var SessionService = injector.get('SessionService');
+                            var session = SessionService.getSession();
+                            console.log(session);
+
+                            if (session && session.id && -1 == config.url.indexOf("http")) {
+                                config.headers['x-session-token'] = session.id;
+                                config.headers['x-key'] = session.userId;
                             }
 
-                            if (-1 == config.url.indexOf(".html")) {
+                            if (-1 == config.url.indexOf(".html") && -1 == config.url.indexOf("http")) {
                                 config.url = "http://localhost:9000/" + config.url;
                             }
+
                             console.log(config);
                             // Return the config or wrap it in a promise if blank.
                             return config || $q.when(config);
@@ -173,16 +211,17 @@ var presApp = angular.module('presApp', [
 
                         // On request failure
                         requestError: function(rejection) {
-                            // console.log(rejection); // Contains the data about the error on the request.
+                            console.log(rejection); // Contains the data about the error on the request.
 
                             // Return the promise rejection.
-                            return $q.reject(rejection);
+                            return rejection;
                         },
 
                         // On response success
                         response: function(response) {
                             // Return the response or promise.
                             if (response) {
+                                console.log(response);
                                 if (angular.isObject(response.data)) {
                                     return response.data;
                                 }
@@ -193,10 +232,10 @@ var presApp = angular.module('presApp', [
 
                         // On response failture
                         responseError: function(rejection) {
-                            // console.log(rejection); // Contains the data about the error.
+                            console.log(rejection); // Contains the data about the error.
 
                             // Return the promise rejection.
-                            return $q.reject(rejection);
+                            return rejection;
                         }
                     };
                 }

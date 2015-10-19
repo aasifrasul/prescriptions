@@ -2,27 +2,33 @@
 
     'use strict';
 
-    presApp.controller('LoginController', ['$scope', '$location', 'AuthenticationService', 'localStorageService',
-        function(scope, $location, AuthenticationService, localStorageService) {
-            var user = {};
-            scope.loginError = false;
-            scope.credentials = {
+    presApp.controller('LoginController', ['$rootScope', '$scope', '$location', 'AuthenticationService', 'SessionService',
+        function($rootScope, $scope, $location, AuthenticationService, SessionService) {
+            $scope.loginError = false;
+            $scope.credentials = {
                 username: '',
                 password: ''
             };
-            scope.isLoginPage = true;
 
-            scope.login = function() {
-                AuthenticationService.login(scope.credentials).then(function(loginObj) {
-                    if (!loginObj || !loginObj.authToken) {
-                        scope.loginError = true;
+            $scope.login = function() {
+                $scope.$emit('loginEvent', $scope.credentials);
+
+                AuthenticationService.login($scope.credentials).then(function(response) {
+                    if (response && response.authToken) {
+                        $scope.$emit('authSuccess', response);
+                        $location.path('/home');
                     } else {
-                        user = loginObj.user;
-                        console.log(user);
-                        $location.path('/myProfile');
+                        $scope.$emit('authFailure', response);
+                        $scope.loginError = true;
                     }
                 });
             }
+
+            $scope.showscope = function(e) {
+                console.log(angular.element(e.srcElement).$scope());
+            };
+
+            console.log($scope);
         }
     ]);
 

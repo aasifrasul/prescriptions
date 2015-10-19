@@ -1,0 +1,46 @@
+<div class="container">
+    <div class="row">
+
+        <div style="display:none" id="login-alert" class="alert alert-danger col-sm-12"></div>
+        <div ng-if="dupUsernameError" class="alert alert-info alert-dismissable">
+            <a class="panel-close close" data-dismiss="alert">×</a> 
+            <i class="fa fa-coffee"></i>
+            User is already present in the Database.
+        </div>
+
+        <form role="form">
+            <div class="col-lg-6">
+                <div class="well well-sm"><strong><span class="glyphicon glyphicon-asterisk"></span>Required Field</strong></div>
+                <div class="form-group">
+                    <label for="InputName">Full Name</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" ng-model="reg.name" placeholder="Enter Name" required>
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="InputEmail">Mobile</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" ng-model="reg.mobile" placeholder="Enter Mobile No" required>
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="InputEmail">Email</label>
+                    <div class="input-group">
+                        <input type="email" class="form-control" ng-model="reg.username" placeholder="Enter Email" ng-blur="verifyUsername()">
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="InputEmail">Password</label>
+                    <div class="input-group">
+                        <input type="password" class="form-control" ng-model="reg.password" placeholder="Enter Password" required>
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>
+                    </div>
+                </div>
+                <input type="button" ng-click="register()" value="Submit" class="btn btn-info pull-right" ng-disabled="dupUsernameError">
+            </div>
+        </form>
+    </div>
+</div>
