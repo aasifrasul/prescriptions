@@ -7,11 +7,10 @@
     "private": true,
     "dependencies": {
         "angular": "latest",
-        "angular-mocks": "latest",
-        "jquery": "latest",
-        "bootstrap": "latest",
         "angular-route": "latest",
-        "angular-resource": "latest",
-        "angular-animate": "latest"
+        "bootstrap": "latest",
+        "jquery": "latest",
+        "angular-bootstrap": "latest",
+        "angular-bootstrap-datetimepicker": "latest"
     }
 }

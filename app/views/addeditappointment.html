@@ -1,0 +1,73 @@
+<div class="container">
+    <button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <div class="row">
+
+        <div style="display:none" id="login-alert" class="alert alert-danger col-sm-12"></div>
+        <div ng-if="dupUsernameError" class="alert alert-info alert-dismissable">
+            <a class="panel-close close" data-dismiss="alert">×</a> 
+            <i class="fa fa-coffee"></i>
+            User is already present in the Database.
+        </div>
+
+        <form role="form">
+            <div class="col-lg-6">
+                <!-- <div class="well well-sm"><strong><span class="glyphicon glyphicon-asterisk"></span>Required Field</strong></div> -->
+                <div class="form-group">
+                    <div class="input-group">
+                        <input type="text" class="form-control" ng-model="data.patient_name" placeholder="Patient's Name" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="input-group">
+                        <input type="text" class="form-control" ng-model="data.mobile" placeholder="Mobile" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="input-group">
+                        Male: <input type="radio" class="form-group" ng-model="data.gender" ng-value="0" />
+                        Female: <input type="radio" class="form-group" ng-model="data.gender" ng-value="1" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="input-group">
+                        <input type="text" class="form-control" ng-model="data.purpose" placeholder="Purpose" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="dropdown">
+                        <a class="dropdown-toggle" id="dropdown2" role="button" data-toggle="dropdown" data-target="#" href="#">
+                            <div class="input-group">
+                                <input type="text" class="form-control" data-ng-model="data.date_time">
+                                <span class="input-group-addon">
+                                    <i class="glyphicon glyphicon-calendar"></i>
+                                </span>
+                            </div>
+                        </a>
+                        <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                            <datetimepicker data-ng-model="data.date_time" data-datetimepicker-config="{ dropdownSelector: '#dropdown2' }"/>
+                        </ul>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="input-group">
+                        <input type="text" class="form-control" ng-model="data.age" placeholder="Age">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="input-group">
+                        <input type="text" class="form-control" ng-model="data.email" placeholder="Email">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="input-group">
+                        <textarea class="form-control" ng-model="data.address" placeholder="Address"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" type="button" ng-click="ok()">OK</button>
+                    <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

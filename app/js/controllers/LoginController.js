@@ -10,13 +10,17 @@
                 password: ''
             };
 
+            if(SessionService.getIsUserAuthenticated() == true) {
+                $location.path('/appointments');
+            }
+
             $scope.login = function() {
                 $scope.$emit('loginEvent', $scope.credentials);
 
                 AuthenticationService.login($scope.credentials).then(function(response) {
                     if (response && response.authToken) {
                         $scope.$emit('authSuccess', response);
-                        $location.path('/home');
+                        $location.path('/appointments');
                     } else {
                         $scope.$emit('authFailure', response);
                         $scope.loginError = true;

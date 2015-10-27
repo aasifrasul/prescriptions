@@ -16,6 +16,7 @@
             $rootScope.$on('authSuccess', function(e, data) {
                 sessionService.setUser(data.user);
                 self.create(data.authToken, data.username, null);
+                $rootScope.isLoggedIn = true;
             });
 
             sessionService.getUser = function() {
@@ -58,8 +59,8 @@
                 session.userId = null;
                 session.userRole = null;
 
-                $window.sessionStorage["session"] = null;
-                $window.sessionStorage["sessionUser"] = null;
+                $window.sessionStorage["session"] = {};
+                $window.sessionStorage["sessionUser"] = {};
             };
 
             return sessionService;

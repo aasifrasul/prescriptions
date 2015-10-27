@@ -2,7 +2,9 @@
 
 var presApp = angular.module('presApp', [
     'ngRoute',
-    'ui.bootstrap.modal'
+    'ui.bootstrap',
+    'ui.bootstrap.modal',
+    'ui.bootstrap.datetimepicker'
 ]);
 
 (function() {
@@ -37,6 +39,16 @@ var presApp = angular.module('presApp', [
             when('/home', {
                 templateUrl: 'views/home.html',
                 controller: 'HomeController',
+                requireLogin: false
+            }).
+            when('/appointments', {
+                templateUrl: 'views/appointments.html',
+                controller: 'AppointmentsController',
+                requireLogin: false
+            }).
+            when('/prescriptions', {
+                templateUrl: 'views/prescriptions.html',
+                controller: 'PrescriptionsController',
                 requireLogin: false
             }).
             when('/login', {
@@ -193,7 +205,6 @@ var presApp = angular.module('presApp', [
                             //var injector = angular.injector(['ng', 'presApp']);
                             //var SessionService = injector.get('SessionService');
                             var session = SessionService.getSession();
-                            console.log(session);
 
                             if (session && session.id && -1 == config.url.indexOf("http")) {
                                 config.headers['x-session-token'] = session.id;
@@ -204,7 +215,6 @@ var presApp = angular.module('presApp', [
                                 config.url = "http://localhost:9000/" + config.url;
                             }
 
-                            console.log(config);
                             // Return the config or wrap it in a promise if blank.
                             return config || $q.when(config);
                         },
@@ -221,7 +231,6 @@ var presApp = angular.module('presApp', [
                         response: function(response) {
                             // Return the response or promise.
                             if (response) {
-                                console.log(response);
                                 if (angular.isObject(response.data)) {
                                     return response.data;
                                 }
