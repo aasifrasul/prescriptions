@@ -11,6 +11,7 @@
         "bootstrap": "latest",
         "jquery": "latest",
         "angular-bootstrap": "latest",
-        "angular-bootstrap-datetimepicker": "latest"
+        "angular-bootstrap-datetimepicker": "latest",
+        "angular-auto-validate": "latest"
     }
 }

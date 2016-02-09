@@ -1,25 +1,35 @@
 <div class="container">
     <button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
     <div class="row">
+        <h3>Please Fill the Appointment Details<button type="button" ng-click="cancel();" class="closealertmodal">&times;</button></h3>
 
-        <div style="display:none" id="login-alert" class="alert alert-danger col-sm-12"></div>
-        <div ng-if="dupUsernameError" class="alert alert-info alert-dismissable">
-            <a class="panel-close close" data-dismiss="alert">×</a> 
-            <i class="fa fa-coffee"></i>
-            User is already present in the Database.
-        </div>
-
-        <form role="form">
+        <form 
+            role="form" 
+            ng-submit="ok()"
+            novalidate="novalidate">
             <div class="col-lg-6">
                 <!-- <div class="well well-sm"><strong><span class="glyphicon glyphicon-asterisk"></span>Required Field</strong></div> -->
                 <div class="form-group">
                     <div class="input-group">
-                        <input type="text" class="form-control" ng-model="data.patient_name" placeholder="Patient's Name" required>
+                        <input 
+                            type="text" 
+                            class="form-control" 
+                            ng-model="data.patient_name" 
+                            placeholder="Patient Name"
+                            required
+                            />
                     </div>
                 </div>
                 <div class="form-group">
                     <div class="input-group">
-                        <input type="text" class="form-control" ng-model="data.mobile" placeholder="Mobile" required>
+                        <input 
+                            type="text" 
+                            class="form-control" 
+                            ng-model="data.mobile"
+                            ng-pattern="/^[789]\d{9}$/"
+                            placeholder="Mobile No"
+                            required
+                            />
                     </div>
                 </div>
                 <div class="form-group">
@@ -30,41 +40,74 @@
                 </div>
                 <div class="form-group">
                     <div class="input-group">
-                        <input type="text" class="form-control" ng-model="data.purpose" placeholder="Purpose" required>
+                        <input 
+                            type="text" 
+                            class="form-control" 
+                            ng-model="data.purpose"
+                            placeholder="Purpose" 
+                            required
+                            />
                     </div>
                 </div>
                 <div class="form-group">
                     <div class="dropdown">
-                        <a class="dropdown-toggle" id="dropdown2" role="button" data-toggle="dropdown" data-target="#" href="#">
-                            <div class="input-group">
-                                <input type="text" class="form-control" data-ng-model="data.date_time">
-                                <span class="input-group-addon">
-                                    <i class="glyphicon glyphicon-calendar"></i>
+                        <a class="dropdown-toggle my-toggle-select" id="dLabel" role="button" data-toggle="dropdown" data-target="#" href="">
+                            <div class="input-append">
+                                <input 
+                                    type="text" 
+                                    class="input-large" 
+                                    data-ng-model="data.date_time"
+                                    />
+                                <span class="add-on">
+                                    <i class="icon-calendar"></i>
                                 </span>
                             </div>
                         </a>
                         <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-                            <datetimepicker data-ng-model="data.date_time" data-datetimepicker-config="{ dropdownSelector: '#dropdown2' }"/>
+                            <datetimepicker 
+                                data-ng-model="data.date_time"
+                                data-datetimepicker-config="{ dropdownSelector: '.my-toggle-select' }"
+                                >
+                            </datetimepicker>
                         </ul>
                     </div>
                 </div>
                 <div class="form-group">
                     <div class="input-group">
-                        <input type="text" class="form-control" ng-model="data.age" placeholder="Age">
+                        <input 
+                            type="text" 
+                            class="form-control" 
+                            ng-model="data.age"
+                            ng-pattern="/[0-9]/"
+                            minlength="1"
+                            maxlength="3"
+                            placeholder="Age"
+                            />
                     </div>
                 </div>
                 <div class="form-group">
                     <div class="input-group">
-                        <input type="text" class="form-control" ng-model="data.email" placeholder="Email">
+                        <input 
+                            type="text" 
+                            class="form-control" 
+                            ng-model="data.email"
+                            ng-pattern="/^[a-z]+[a-z0-9._]+@[a-z]+\.[a-z.]{2,5}$/"
+                            placeholder="Email"
+                            />
                     </div>
                 </div>
                 <div class="form-group">
                     <div class="input-group">
-                        <textarea class="form-control" ng-model="data.address" placeholder="Address"></textarea>
+                        <textarea 
+                            class="form-control" 
+                            ng-model="data.address"
+                            placeholder="Address"
+                            >
+                        </textarea>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button class="btn btn-primary" type="button" ng-click="ok()">OK</button>
+                <div class="form-group">
+                    <button class="btn btn-primary" type="submit">OK</button>
                     <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
                 </div>
             </div>

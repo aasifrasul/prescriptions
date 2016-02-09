@@ -8,38 +8,61 @@
             User is already present in the Database.
         </div>
 
-        <form role="form">
+        <form 
+            role="form" 
+            name="userRegistration" 
+            ng-submit="ok()" 
+            novalidate="novalidate">
             <div class="col-lg-6">
-                <div class="well well-sm"><strong><span class="glyphicon glyphicon-asterisk"></span>Required Field</strong></div>
+                <h3 class="pull-middle">Please fill in the details</h3>
                 <div class="form-group">
-                    <label for="InputName">Full Name</label>
                     <div class="input-group">
-                        <input type="text" class="form-control" ng-model="reg.name" placeholder="Enter Name" required>
-                        <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>
+                        <input 
+                            type="text" 
+                            name="name" 
+                            class="form-control" 
+                            ng-model="data.name" 
+                            placeholder="Name" 
+                            required />
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="InputEmail">Mobile</label>
                     <div class="input-group">
-                        <input type="text" class="form-control" ng-model="reg.mobile" placeholder="Enter Mobile No" required>
-                        <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>
+                        <input 
+                            type="text" 
+                            name="mobile" 
+                            class="form-control" 
+                            ng-model="data.mobile" 
+                            ng-pattern="/^[789]\d{9}$/"
+                            placeholder="Mobile No" 
+                            required />
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="InputEmail">Email</label>
                     <div class="input-group">
-                        <input type="email" class="form-control" ng-model="reg.username" placeholder="Enter Email" ng-blur="verifyUsername()">
-                        <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>
+                        <input 
+                            type="text" 
+                            name="username" 
+                            class="form-control" 
+                            ng-model="data.username" 
+                            placeholder="Username" 
+                            ng-blur="verifyUsername()"
+                            required />
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="InputEmail">Password</label>
                     <div class="input-group">
-                        <input type="password" class="form-control" ng-model="reg.password" placeholder="Enter Password" required>
-                        <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>
+                        <input 
+                            type="password" 
+                            name="password" 
+                            class="form-control" 
+                            ng-model="data.password" 
+                            placeholder="Password" 
+                            required />
                     </div>
                 </div>
-                <input type="button" ng-click="register()" value="Submit" class="btn btn-info pull-right" ng-disabled="dupUsernameError">
+                <button class="btn btn-primary" type="submit">OK</button>
+                <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
             </div>
         </form>
     </div>

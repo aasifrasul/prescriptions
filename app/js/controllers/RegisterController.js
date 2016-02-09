@@ -3,27 +3,33 @@
     'use strict';
 
     presApp.controller('RegisterController', ['$scope', 'UsersService', 'AuthenticationService',
-        function(scope, UsersService, AuthenticationService) {
-            scope.dupUsernameError = false;
+        function($scope, UsersService, AuthenticationService) {
+            $scope.dupUsernameError = false;
 
-            scope.register = function() {
-                UsersService.register(scope.reg);
+            $scope.register = function() {
+                $scope.$broadcast('show-errors-check-validity');
+
+                if ($scope.userRegistration.$invalid) {
+                    return;
+                }
+
+                UsersService.register($scope.reg);
             }
 
-            scope.verifyUsername = function() {
+            $scope.verifyUsername = function() {
                 //AuthenticationService = injector.get('AuthenticationService');
                 AuthenticationService.verifyUsername({
-                    "username": scope.reg.username
+                    "username": $scope.reg.username
                 }).then(function(result) {
                     if (!result.message) {
-                        scope.dupUsernameError = true;
+                        $scope.dupUsernameError = true;
                     } else {
-                        scope.dupUsernameError = false;
+                        $scope.dupUsernameError = false;
                     }
                 })
             }
 
-            $scope.showscope = function(e) {
+            $scope.show$scope = function(e) {
                 console.log(angular.element(e.srcElement).$scope());
             };
 

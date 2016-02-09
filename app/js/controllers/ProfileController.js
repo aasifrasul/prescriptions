@@ -2,23 +2,24 @@
 
     'use strict';
 
-    presApp.controller('ProfileController', ['$scope', '$location', 'UsersService', 'SessionService',
-        function($scope, $location, UsersService, SessionService) {
+    function ProfileController($scope, $location, UsersService, SessionService) {
+        $scope.user = SessionService.getUser();
 
-            $scope.updateProfile = function() {
-                console.log($scope.user);
-                UsersService.updateUser($scope.user).then(function(response) {
-                    SessionService.setUser(response.user);
-                    console.log(response);
-                });
-            }
-
-            $scope.showscope = function(e) {
-                console.log(angular.element(e.srcElement).$scope());
-            };
-
-            console.log($scope);
+        $scope.updateProfile = function() {
+            UsersService.updateUser($scope.user).then(function(response) {
+                SessionService.setUser(response.user);
+            });
         }
-    ]);
+
+        $scope.showscope = function(e) {
+            console.log(angular.element(e.srcElement).$scope());
+        };
+
+        console.log($scope);
+    }
+
+    ProfileController.$inject = ['$scope', '$location', 'UsersService', 'SessionService'];
+
+    presApp.controller('ProfileController', ProfileController);
 
 }());

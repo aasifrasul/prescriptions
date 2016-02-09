@@ -4,12 +4,13 @@ var presApp = angular.module('presApp', [
     'ngRoute',
     'ui.bootstrap',
     'ui.bootstrap.modal',
-    'ui.bootstrap.datetimepicker'
+    'ui.bootstrap.datetimepicker',
+    'ui.bootstrap.showErrors',
+    'jcs-autoValidate'
 ]);
 
 (function() {
     var baseUrl = '';
-
     presApp.constant('baseUrl', 'http://localhost:9000/');
 
     presApp.constant('AUTH_EVENTS', {
@@ -21,7 +22,7 @@ var presApp = angular.module('presApp', [
         notAuthorized: 'auth-not-authorized'
     });
 
-    presApp.service('modHttp', ['$http',
+    /*presApp.service('modHttp', ['$http',
         function($http) {
 
             this.http = function(params) {
@@ -29,6 +30,12 @@ var presApp = angular.module('presApp', [
                 return $http(params);
             }
 
+        }
+    ]);*/
+
+    presApp.config(['showErrorsConfigProvider',
+        function(showErrorsConfigProvider) {
+            showErrorsConfigProvider.showSuccess(true);
         }
     ]);
 
@@ -38,60 +45,50 @@ var presApp = angular.module('presApp', [
             $routeProvider.
             when('/home', {
                 templateUrl: 'views/home.html',
-                controller: 'HomeController',
-                requireLogin: false
+                controller: 'HomeController'
             }).
             when('/appointments', {
                 templateUrl: 'views/appointments.html',
-                controller: 'AppointmentsController',
-                requireLogin: false
+                controller: 'AppointmentsController'
             }).
             when('/prescriptions', {
                 templateUrl: 'views/prescriptions.html',
-                controller: 'PrescriptionsController',
-                requireLogin: false
+                controller: 'PrescriptionsController'
             }).
             when('/login', {
                 templateUrl: 'views/login.html',
-                controller: 'LoginController',
-                requireLogin: false
+                controller: 'LoginController'
             }).
             when('/register', {
                 templateUrl: 'views/register.html',
-                controller: 'RegisterController',
-                requireLogin: false
+                controller: 'RegisterController'
             }).
             when('/contactus', {
                 templateUrl: 'views/contactus.html',
-                controller: 'RegisterController',
-                requireLogin: false
+                controller: 'MiscController'
             }).
-            when('/forgotPassword', {
+            when('/forgotpassword', {
                 templateUrl: 'views/forgotpassword.html',
-                controller: 'ForgotPasswordController',
-                requireLogin: true
+                controller: 'ForgotPasswordController'
             }).
-            when('/myProfile', {
+            when('/myprofile', {
                 templateUrl: 'views/myprofile.html',
-                controller: 'ProfileController',
-                requireLogin: true
+                controller: 'ProfileController'
             }).
             when('/prescriptions', {
                 templateUrl: 'views/prescriptions.html',
-                controller: 'PrescriptionsController',
-                requireLogin: true
+                controller: 'PrescriptionsController'
             }).
             when('/prescriptions/:prescriptionId', {
                 templateUrl: 'views/prescription-detail.html',
-                controller: 'PrescriptionsDetailController',
-                requireLogin: true
+                controller: 'PrescriptionsDetailController'
             }).
             otherwise({
                 redirectTo: '/'
             });
         }
     ]);
-/*
+    /*
     presApp.config(['$routeProvider',
         function($routeProvider) {
             var injector = angular.injector(['ng', 'presApp']);
@@ -204,9 +201,9 @@ var presApp = angular.module('presApp', [
                         request: function(config) {
                             //var injector = angular.injector(['ng', 'presApp']);
                             //var SessionService = injector.get('SessionService');
-                            var session = SessionService.getSession();
+                            var session = SessionService.getSession() || {};
 
-                            if (session && session.id && -1 == config.url.indexOf("http")) {
+                            if (session.id) {
                                 config.headers['x-session-token'] = session.id;
                                 config.headers['x-key'] = session.userId;
                             }
@@ -253,5 +250,20 @@ var presApp = angular.module('presApp', [
             $httpProvider.interceptors.push('MyHttpInterceptor');
         }
     ]);
+/*
+    presApp.run([
+        'bootstrap3ElementModifier',
+        function(bootstrap3ElementModifier) {
+            bootstrap3ElementModifier.enableValidationStateIcons(true);
+        }
+    ]);
 
+    presApp.run([
+        'validator',
+        function(validator) {
+            validator.setValidElementStyling(false);
+            validator.setInvalidElementStyling(false);
+        }
+    ]);
+*/
 }());

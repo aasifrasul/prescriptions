@@ -5,7 +5,7 @@
     presApp.service('SessionService', ['$window', '$rootScope',
         function($window, $rootScope) {
             var self = this;
-            var sessionService = {};
+            var factory = {};
             var user = null;
             var session = {};
 
@@ -14,12 +14,12 @@
             });
 
             $rootScope.$on('authSuccess', function(e, data) {
-                sessionService.setUser(data.user);
+                factory.setUser(data.user);
                 self.create(data.authToken, data.username, null);
                 $rootScope.isLoggedIn = true;
             });
 
-            sessionService.getUser = function() {
+            factory.getUser = function() {
                 if(!user || !user.username) {
                     user = $window.sessionStorage["sessionUser"];
                     user = (user) ? JSON.parse(user) : {};
@@ -28,16 +28,18 @@
                 return user;
             };
 
-            sessionService.setUser = function(user) {
-                $window.sessionStorage["sessionUser"] = JSON.stringify(user);
+            factory.setUser = function(user) {
+                if(user && user.username) {
+                    $window.sessionStorage["sessionUser"] = JSON.stringify(user);
+                }
             };
 
-            sessionService.getIsUserAuthenticated = function() {
-                sessionService.getSession();
+            factory.getIsUserAuthenticated = function() {
+                factory.getSession();
                 return session && session.id;
             };
 
-            sessionService.getSession = function() {
+            factory.getSession = function() {
                 if(!session || !session.id) {
                     session = $window.sessionStorage["session"];
                     session = (session) ? JSON.parse(session) : {};
@@ -47,6 +49,7 @@
             }
 
             this.create = function(sessionId, userId, userRole) {
+                if(!sessionId || !userId) return;
                 session.id = sessionId;
                 session.userId = userId;
                 session.userRole = userRole;
@@ -59,11 +62,11 @@
                 session.userId = null;
                 session.userRole = null;
 
-                $window.sessionStorage["session"] = {};
-                $window.sessionStorage["sessionUser"] = {};
+                $window.sessionStorage.removeItem("session");
+                $window.sessionStorage.removeItem("sessionUser");
             };
 
-            return sessionService;
+            return factory;
         }
     ]);
 

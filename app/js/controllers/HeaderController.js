@@ -22,6 +22,7 @@
             $scope.logout = function() {
                 $scope.$emit('logoutEvent');
                 $location.path('/login');
+                $scope.userIsAuthenticated = false;
             };
 
             $scope.showscope = function(e) {
