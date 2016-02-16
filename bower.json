@@ -12,6 +12,9 @@
         "jquery": "latest",
         "angular-bootstrap": "latest",
         "angular-bootstrap-datetimepicker": "latest",
+        "underscore": "latest",
+        "moment": "latest",
+        "restangular": "latest",
         "angular-auto-validate": "latest"
     }
 }

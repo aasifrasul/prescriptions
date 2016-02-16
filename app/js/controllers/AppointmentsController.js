@@ -4,20 +4,41 @@
 
     function AppointmentsController($scope, $location, $uibModal, AppointmentsService, SessionService, PrescriptionsService) {
         var modalInstance = null;
-        $scope.user = SessionService.getUser();
+        var user = SessionService.getUser();
+        $scope.from = 'Today';
+        $scope.itemsPerPage = 5;
+        $scope.currentPage = 1;
+        $scope.appointments = [];
+        $scope.totalAppointments = [];
 
-        function fetchAppointments(from, userId) {
-            AppointmentsService.fetchAppointmentsByUserId(userId).then(function(response) {
+        $scope.$watch("itemsPerPage", function(newValue, oldValue) {
+            if(!newValue) {
+                newValue = oldValue;
+            }
+
+            if (newValue !== oldValue) {
+                $scope.currentPage = 1;
+                setAppointments();
+            }
+        });
+
+        $scope.fetchAppointments = function(from) {
+            $scope.from = from;
+            AppointmentsService.fetchAppointmentsFromByUserId(from, user._id).then(function(response) {
                 if (response && response.appointments) {
-                    $scope.appointments = response.appointments;
+                    $scope.totalAppointments = response.appointments;
+                    setAppointments();
+                    $scope.currentPage = 1;
                 }
             });
         }
 
-        fetchAppointments('Today', $scope.user._id);
+        function setAppointments() {
+            if ($scope.totalAppointments.length) $scope.appointments = $scope.totalAppointments.slice(0, $scope.itemsPerPage);
+        }
 
         $scope.create = function(size) {
-            modalInstance ? modalInstance.dismiss() : '';
+            closeModal();
 
             modalInstance = $uibModal.open({
                 templateUrl: 'views/addeditappointment.html',
@@ -33,7 +54,6 @@
             modalInstance.result.then(function(data) {
                 AppointmentsService.create(data).then(function(response) {
                     if (response) {
-                        fetchAppointments($scope.user._id);
                         document.location.reload();
                     }
                 })
@@ -44,7 +64,7 @@
         };
 
         $scope.editAppointment = function(index) {
-            modalInstance ? modalInstance.dismiss() : '';
+            closeModal();
 
             modalInstance = $uibModal.open({
                 templateUrl: 'views/addeditappointment.html',
@@ -60,7 +80,6 @@
             modalInstance.result.then(function(data) {
                 AppointmentsService.update(data).then(function(response) {
                     if (response) {
-                        fetchAppointments($scope.user._id);
                         document.location.reload();
                     }
                 })
@@ -79,7 +98,7 @@
         }
 
         $scope.createPrescription = function(index) {
-            modalInstance ? modalInstance.dismiss() : '';
+            closeModal();
 
             modalInstance = $uibModal.open({
                 templateUrl: 'views/addeditprescription.html',
@@ -103,6 +122,21 @@
                 console.log('Modal dismissed at: ' + new Date());
             });
         };
+
+        function closeModal() {
+            modalInstance ? modalInstance.dismiss() : '';
+        }
+
+        $scope.setPage = function(pageNo) {
+            $scope.currentPage = pageNo;
+            console.log('Page changed to: ' + $scope.currentPage);
+        };
+
+        $scope.pageChanged = function() {
+            $scope.appointments = $scope.totalAppointments.slice(($scope.currentPage - 1) * $scope.itemsPerPage, $scope.currentPage * $scope.itemsPerPage);
+        };
+
+        $scope.fetchAppointments($scope.from);
 
         $scope.showscope = function(e) {
             console.log(angular.element(e.srcElement).$scope());

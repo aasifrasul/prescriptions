@@ -18,7 +18,7 @@
         fetchPrescriptions($scope.user._id);
 
         $scope.create = function(size) {
-            modalInstance ? modalInstance.dismiss() : '';
+            closeModal();
 
             modalInstance = $uibModal.open({
                 templateUrl: 'views/addeditprescription.html',
@@ -45,7 +45,7 @@
         };
 
         $scope.editPrescription = function(index) {
-            modalInstance ? modalInstance.dismiss() : '';
+            closeModal();
 
             modalInstance = $uibModal.open({
                 templateUrl: 'views/addeditprescription.html',
@@ -80,7 +80,7 @@
         }
 
         $scope.detail = function(index) {
-            modalInstance ? modalInstance.dismiss() : '';
+            closeModal();
 
             modalInstance = $uibModal.open({
                 templateUrl: 'views/prescriptiondetail.html',
@@ -96,6 +96,10 @@
 
         $scope.showscope = function(e) {
             console.log(angular.element(e.srcElement).$scope());
+        }
+
+        function closeModal() {
+            modalInstance ? modalInstance.dismiss() : '';
         }
 
         console.log($scope);

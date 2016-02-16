@@ -6,12 +6,24 @@
         </h1>
         <!-- <p>Here is all the Appointments for today.</p> -->
         See more <b>Apointments</b>&nbsp;&nbsp;=>&nbsp;&nbsp;
-        <a href="" ng-click="fetchAppointments('All');">All</a>&nbsp;<=>&nbsp;
+        <a href="" ng-click="fetchAppointments('Today');">Today's</a>&nbsp;<=>&nbsp;
         <a href="" ng-click="fetchAppointments('Yesterday');">Yesterday's</a>&nbsp;<=>&nbsp;
-        <a href="" ng-click="fetchAppointments('This Week');">This Week</a>&nbsp;<=>&nbsp;
-        <a href="" ng-click="fetchAppointments('This Month');">This Month</a>&nbsp;<=>&nbsp;
-        <a href="" ng-click="fetchAppointments('This Year');">This Year</a>
+        <a href="" ng-click="fetchAppointments('Last Week');">Last Week</a>&nbsp;<=>&nbsp;
+        <a href="" ng-click="fetchAppointments('Last Month');">Last Month</a>&nbsp;<=>&nbsp;
+        <a href="" ng-click="fetchAppointments('Last Year');">Last Year</a>&nbsp;<=>&nbsp;
+        <a href="" ng-click="fetchAppointments('All');">All</a>
     </div>
+</div>
+Set Items per Page : <input type="text" ng-model="itemsPerPage" size="5">
+<div ng-show="totalAppointments.length > itemsPerPage">
+    <uib-pagination 
+        total-items="totalAppointments.length" 
+        items-per-page="itemsPerPage || 5" 
+        ng-model="currentPage" 
+        class="pagination-sm" 
+        boundary-links="true" 
+        ng-change="pageChanged()">
+    </uib-pagination>
 </div>
 
 <div class="row">
@@ -27,4 +39,15 @@
         <button class="btn btn-warning" type="button" ng-click="deleteAppointment($index)">Delete</button>
     </div>
 
+</div>
+
+<div ng-show="totalAppointments.length > itemsPerPage">
+    <uib-pagination 
+        total-items="totalAppointments.length" 
+        items-per-page="itemsPerPage || 5" 
+        ng-model="currentPage" 
+        class="pagination-sm" 
+        boundary-links="true" 
+        ng-change="pageChanged()">
+    </uib-pagination>
 </div>

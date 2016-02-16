@@ -84,7 +84,7 @@ var presApp = angular.module('presApp', [
                 controller: 'PrescriptionsDetailController'
             }).
             otherwise({
-                redirectTo: '/'
+                redirectTo: '/appointments'
             });
         }
     ]);

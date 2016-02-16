@@ -57,10 +57,10 @@
                 return defer.promise;
             };
 
-            factory.fetchAppointmentsByUserId = function(userId) {
+            factory.fetchAppointmentsFromByUserId = function(from, userId) {
                 var defer = $q.defer();
 
-                $http.get("api/v1/appointments/" + userId).then(function(result) {
+                $http.get("api/v1/appointments/" + userId + "/" + from).then(function(result) {
 
                     if (result.errors) {
                         defer.reject(result.errors);
