@@ -98,11 +98,6 @@
             console.log(angular.element(e.srcElement).$scope());
         }
 
-        function closeModal() {
-            modalInstance ? modalInstance.dismiss() : '';
-        }
-
-        console.log($scope);
     }
 
     PrescriptionsController.$inject = ['$scope', '$location', '$uibModal', 'PrescriptionsService', 'SessionService'];

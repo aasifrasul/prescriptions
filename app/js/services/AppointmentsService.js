@@ -8,8 +8,6 @@
 
             factory.create = function(payload) {
                 var defer = $q.defer();
-                payload.doctor_name = SessionService.getUser().name;
-                payload.doctor_id = SessionService.getUser()._id;
 
                 $http.post("api/v1/appointment", payload).then(function(result) {
 

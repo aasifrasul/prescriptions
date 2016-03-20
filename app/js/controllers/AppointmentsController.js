@@ -1,152 +1,158 @@
 (function() {
 
-    'use strict';
+	'use strict';
 
-    function AppointmentsController($scope, $location, $uibModal, AppointmentsService, SessionService, PrescriptionsService) {
-        var modalInstance = null;
-        var user = SessionService.getUser();
-        $scope.from = 'Today';
-        $scope.itemsPerPage = 5;
-        $scope.currentPage = 1;
-        $scope.appointments = [];
-        $scope.totalAppointments = [];
+	function AppointmentsController($scope, $location, $uibModal, AppointmentsService, SessionService, PrescriptionsService) {
+		var modalInstance = null;
+		var user = SessionService.getUser();
+		$scope.displayType = SessionService.getSessionStorageByKey('displayType') || 'Today';
+		$scope.displayTypes = ['Today', 'Yesterday', 'Last Week', 'Last Month', 'Last Year', 'All'];
+		$scope.itemsPerPage = 5;
+		$scope.currentPage = 1;
+		$scope.appointments = [];
+		$scope.totalAppointments = [];
 
-        $scope.$watch("itemsPerPage", function(newValue, oldValue) {
-            if(!newValue) {
-                newValue = oldValue;
-            }
+		$scope.$watch("itemsPerPage", function(newValue, oldValue) {
+			if (!newValue) {
+				newValue = oldValue;
+			}
 
-            if (newValue !== oldValue) {
-                $scope.currentPage = 1;
-                setAppointments();
-            }
-        });
+			if (newValue !== oldValue) {
+				$scope.currentPage = 1;
+				setAppointments();
+			}
+		});
 
-        $scope.fetchAppointments = function(from) {
-            $scope.from = from;
-            AppointmentsService.fetchAppointmentsFromByUserId(from, user._id).then(function(response) {
-                if (response && response.appointments) {
-                    $scope.totalAppointments = response.appointments;
-                    setAppointments();
-                    $scope.currentPage = 1;
-                }
-            });
-        }
+		$scope.fetchAppointments = function(displayType) {
+			$scope.displayType = displayType;
+			SessionService.setSessionStorageByKey('displayType', displayType);
+			AppointmentsService.fetchAppointmentsFromByUserId(displayType, user._id).then(function(response) {
+				if (response && response.appointments) {
+					$scope.totalAppointments = response.appointments;
+					setAppointments();
+					$scope.currentPage = 1;
+				}
+			});
+		}
 
-        function setAppointments() {
-            if ($scope.totalAppointments.length) $scope.appointments = $scope.totalAppointments.slice(0, $scope.itemsPerPage);
-        }
+		function setAppointments() {
+			if ($scope.totalAppointments.length) $scope.appointments = $scope.totalAppointments.slice(0, $scope.itemsPerPage);
+		}
 
-        $scope.create = function(size) {
-            closeModal();
+		$scope.create = function(size) {
+			closeModal();
 
-            modalInstance = $uibModal.open({
-                templateUrl: 'views/addeditappointment.html',
-                controller: 'ModalInstanceController',
-                windowClass: 'large-Modal',
-                resolve: {
-                    data: function() {
-                        return null;
-                    }
-                }
-            });
+			modalInstance = $uibModal.open({
+				templateUrl: 'views/addeditappointment.html',
+				controller: 'ModalInstanceController',
+				windowClass: 'large-Modal',
+				resolve: {
+					data: function() {
+						return null;
+					}
+				}
+			});
 
-            modalInstance.result.then(function(data) {
-                AppointmentsService.create(data).then(function(response) {
-                    if (response) {
-                        document.location.reload();
-                    }
-                })
+			modalInstance.result.then(function(data) {
+				data.doctor_name = user.name;
+				data.doctor_id = user._id;
+				data.date_time = Date.parse(data.date_time);
 
-            }, function() {
-                console.log('Modal dismissed at: ' + new Date());
-            });
-        };
+				AppointmentsService.create(data).then(function(response) {
+					if (response) {
+						document.location.reload();
+					}
+				})
 
-        $scope.editAppointment = function(index) {
-            closeModal();
+			}, function() {
+				console.log('Modal dismissed at: ' + new Date());
+			});
+		};
 
-            modalInstance = $uibModal.open({
-                templateUrl: 'views/addeditappointment.html',
-                controller: 'ModalInstanceController',
-                windowClass: 'large-Modal',
-                resolve: {
-                    data: function() {
-                        return $scope.appointments[index];
-                    }
-                }
-            });
+		$scope.editAppointment = function(index) {
+			closeModal();
 
-            modalInstance.result.then(function(data) {
-                AppointmentsService.update(data).then(function(response) {
-                    if (response) {
-                        document.location.reload();
-                    }
-                })
+			modalInstance = $uibModal.open({
+				templateUrl: 'views/addeditappointment.html',
+				controller: 'ModalInstanceController',
+				windowClass: 'large-Modal',
+				resolve: {
+					data: function() {
+						return $scope.appointments[index];
+					}
+				}
+			});
 
-            }, function() {
-                console.log('Modal dismissed at: ' + new Date());
-            });
-        };
+			modalInstance.result.then(function(data) {
+				AppointmentsService.update(data).then(function(response) {
+					if (response) {
+						document.location.reload();
+					}
+				})
 
-        $scope.deleteAppointment = function(index) {
-            AppointmentsService.delete($scope.appointments[index]._id).then(function(response) {
-                if (response) {
-                    delete $scope.appointments[index];
-                }
-            });
-        }
+			}, function() {
+				console.log('Modal dismissed at: ' + new Date());
+			});
+		};
 
-        $scope.createPrescription = function(index) {
-            closeModal();
+		$scope.deleteAppointment = function(index) {
+			AppointmentsService.delete($scope.appointments[index]._id).then(function(response) {
+				if (response) {
+					delete $scope.appointments[index];
+				}
+			});
+		}
 
-            modalInstance = $uibModal.open({
-                templateUrl: 'views/addeditprescription.html',
-                controller: 'ModalInstanceController',
-                windowClass: 'large-Modal',
-                resolve: {
-                    data: function() {
-                        return $scope.appointments[index];
-                    }
-                }
-            });
+		$scope.createPrescription = function(index) {
+			closeModal();
 
-            modalInstance.result.then(function(data) {
-                PrescriptionsService.create(data).then(function(response) {
-                    if (response) {
-                        document.location.reload();
-                    }
-                })
+			modalInstance = $uibModal.open({
+				templateUrl: 'views/addeditprescription.html',
+				controller: 'ModalInstanceController',
+				windowClass: 'large-Modal',
+				resolve: {
+					data: function() {
+						return $scope.appointments[index];
+					}
+				}
+			});
 
-            }, function() {
-                console.log('Modal dismissed at: ' + new Date());
-            });
-        };
+			modalInstance.result.then(function(data) {
+				PrescriptionsService.create(data).then(function(response) {
+					if (response) {
+						document.location.reload();
+					}
+				})
 
-        function closeModal() {
-            modalInstance ? modalInstance.dismiss() : '';
-        }
+			}, function() {
+				console.log('Modal dismissed at: ' + new Date());
+			});
+		};
 
-        $scope.setPage = function(pageNo) {
-            $scope.currentPage = pageNo;
-            console.log('Page changed to: ' + $scope.currentPage);
-        };
+		function closeModal() {
+			modalInstance ? modalInstance.dismiss() : '';
+		}
 
-        $scope.pageChanged = function() {
-            $scope.appointments = $scope.totalAppointments.slice(($scope.currentPage - 1) * $scope.itemsPerPage, $scope.currentPage * $scope.itemsPerPage);
-        };
+		$scope.setPage = function(pageNo) {
+			$scope.currentPage = pageNo;
+			console.log('Page changed to: ' + $scope.currentPage);
+		};
 
-        $scope.fetchAppointments($scope.from);
+		$scope.pageChanged = function() {
+			$scope.appointments = $scope.totalAppointments.slice(($scope.currentPage - 1) * $scope.itemsPerPage, $scope.currentPage * $scope.itemsPerPage);
+		};
 
-        $scope.showscope = function(e) {
-            console.log(angular.element(e.srcElement).$scope());
-        }
+		$scope.fetchAppointments($scope.displayType);
 
-        console.log($scope);
-    }
+		$scope.showscope = function(e) {
+			console.log(angular.element(e.srcElement).$scope());
+		}
 
-    AppointmentsController.$inject = ['$scope', '$location', '$uibModal', 'AppointmentsService', 'SessionService', 'PrescriptionsService'];
+		console.log($scope);
+	}
 
-    presApp.controller('AppointmentsController', AppointmentsController);
+	AppointmentsController.$inject = ['$scope', '$location', '$uibModal', 'AppointmentsService', 'SessionService', 'PrescriptionsService'];
+
+	presApp.controller('AppointmentsController', AppointmentsController);
 
 }());

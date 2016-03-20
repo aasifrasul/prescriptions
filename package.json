@@ -12,6 +12,7 @@
         "karma-phantomjs-launcher": "latest",
         "karma-nested-reporter": "latest",
         "jasmine-reporters": "latest",
+        "phantomjs-prebuilt": "latest",
         "karma-coverage": "latest",
         "karma-jasmine": "latest",
         "http-server": "latest",

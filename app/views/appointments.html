@@ -1,27 +1,36 @@
 <div class="row">
     <div class="col-lg-12">
-        <h1 class="page-header">Today's Apointments
+        <h1 class="page-header">
+            <span ng-show="displayType != 'All'">{{displayType}}'s Apointments</span>
+            <span ng-show="displayType == 'All'">{{displayType}} Apointments</span>
             <button type="submit" ng-click="create()" class="btn btn-primary pull-right">Create</button>
             <!-- <small>It's Nice to Meet You!</small> -->
         </h1>
         <!-- <p>Here is all the Appointments for today.</p> -->
         See more <b>Apointments</b>&nbsp;&nbsp;=>&nbsp;&nbsp;
-        <a href="" ng-click="fetchAppointments('Today');">Today's</a>&nbsp;<=>&nbsp;
-        <a href="" ng-click="fetchAppointments('Yesterday');">Yesterday's</a>&nbsp;<=>&nbsp;
-        <a href="" ng-click="fetchAppointments('Last Week');">Last Week</a>&nbsp;<=>&nbsp;
-        <a href="" ng-click="fetchAppointments('Last Month');">Last Month</a>&nbsp;<=>&nbsp;
-        <a href="" ng-click="fetchAppointments('Last Year');">Last Year</a>&nbsp;<=>&nbsp;
-        <a href="" ng-click="fetchAppointments('All');">All</a>
+        <label
+            class="radio-inline"
+            ng-repeat="(key, value) in displayTypes"
+            ng-click="fetchAppointments(value);">
+            <input
+                type="radio"
+                name="displayType"
+                ng-checked="displayType == value">{{value}}
+        </label>
     </div>
 </div>
 Set Items per Page : <input type="text" ng-model="itemsPerPage" size="5">
 <div ng-show="totalAppointments.length > itemsPerPage">
-    <uib-pagination 
-        total-items="totalAppointments.length" 
-        items-per-page="itemsPerPage || 5" 
-        ng-model="currentPage" 
-        class="pagination-sm" 
-        boundary-links="true" 
+    <uib-pagination
+        total-items="totalAppointments.length"
+        items-per-page="itemsPerPage || 5"
+        ng-model="currentPage"
+        class="pagination-sm"
+        boundary-links="true"
+        next-text=">"
+        last-text=">>"
+        first-text="<<"
+        previous-text="<"
         ng-change="pageChanged()">
     </uib-pagination>
 </div>
@@ -42,12 +51,16 @@ Set Items per Page : <input type="text" ng-model="itemsPerPage" size="5">
 </div>
 
 <div ng-show="totalAppointments.length > itemsPerPage">
-    <uib-pagination 
-        total-items="totalAppointments.length" 
-        items-per-page="itemsPerPage || 5" 
-        ng-model="currentPage" 
-        class="pagination-sm" 
-        boundary-links="true" 
+    <uib-pagination
+        total-items="totalAppointments.length"
+        items-per-page="itemsPerPage || 5"
+        ng-model="currentPage"
+        class="pagination-sm"
+        boundary-links="true"
+        next-text=">"
+        last-text=">>"
+        first-text="<<"
+        previous-text="<"
         ng-change="pageChanged()">
     </uib-pagination>
 </div>

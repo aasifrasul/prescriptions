@@ -1,86 +1,90 @@
 (function() {
 
-    'use strict';
+	'use strict';
 
-    function SessionService($window, $rootScope) {
-        var self = this;
-        var factory = {};
-        var user = null;
-        var session = {};
+	function SessionService($window, $rootScope, StorageService) {
+		var self = this;
+		var factory = {};
+		var user = {};
+		var session = {};
 
-        $rootScope.$on('logoutEvent', function(e, data) {
-            $rootScope.isLoggedIn = false;
-            self.destroy();
-        });
+		$rootScope.$on('logoutEvent', function(e, data) {
+			$rootScope.isLoggedIn = false;
+			self.destroy();
+		});
 
-        $rootScope.$on('authSuccess', function(e, data) {
-            user = data.user || {};
-            if (factory.getRemember()) factory.setUser(user);
-            self.create(data.authToken, user.username, null);
-            $rootScope.isLoggedIn = true;
-        });
+		$rootScope.$on('authSuccess', function(e, data) {
+			user = data.user || {};
+			factory.setUser(user);
+			self.create(data.authToken, user.username, null);
+			$rootScope.isLoggedIn = true;
+		});
 
-        factory.getUser = function() {
-            if (!user || !user.username) {
-                user = $window.sessionStorage["sessionUser"];
-                user = (user) ? JSON.parse(user) : {};
-            }
+		factory.getUser = function() {
+			if (!user.username) {
+				user = StorageService.get("user");
+				user = (user) ? JSON.parse(user) : {};
+			}
 
-            return user;
-        };
+			return user;
+		};
 
-        factory.setUser = function(user) {
-            if (user && user.username) {
-                $window.sessionStorage["sessionUser"] = JSON.stringify(user);
-            }
-        };
+		factory.setUser = function(user) {
+			(user.username) ? StorageService.set("user", JSON.stringify(user)) : '';
+		};
 
-        factory.setRemember = function(remember) {
-            $window.sessionStorage["remember"] = remember;
-        };
+		factory.setLocalStorageByKey = function(key, value) {
+			StorageService.set(key, value, 'local');
+		};
 
-        factory.getRemember = function() {
-            return $window.sessionStorage["remember"];
-        };
+		factory.getLocalStorageByKey = function(key) {
+			return StorageService.get(key, 'local');
+		};
 
-        factory.getIsUserAuthenticated = function() {
-            factory.getSession();
-            return session && session.id;
-        };
+		factory.setSessionStorageByKey = function(key, value) {
+			StorageService.set(key, value, 'session');
+		};
 
-        factory.getSession = function() {
-            if (!session || !session.id) {
-                session = $window.sessionStorage["session"];
-                session = (session) ? JSON.parse(session) : {};
-            }
+		factory.getSessionStorageByKey = function(key) {
+			return StorageService.get(key, 'session');
+		};
 
-            return session;
-        }
+		factory.getIsUserAuthenticated = function() {
+			factory.getSession();
+			return session && session.id;
+		};
 
-        this.create = function(sessionId, userId, userRole) {
-            if (!sessionId || !userId) return;
-            session.id = sessionId;
-            session.userId = userId;
-            session.userRole = userRole;
+		factory.getSession = function() {
+			if (!session.id) {
+				session = StorageService.get("session");
+				session = (session) ? JSON.parse(session) : {};
+			}
 
-            if (factory.getRemember()) $window.sessionStorage["session"] = JSON.stringify(session);
-        };
+			return session;
+		}
 
-        this.destroy = function() {
-            session.id = null;
-            session.userId = null;
-            session.userRole = null;
+		this.create = function(sessionId, userId, userRole) {
+			if (!sessionId || !userId) return;
+			session.id = sessionId;
+			session.userId = userId;
+			session.userRole = userRole;
 
-            $window.sessionStorage.removeItem("session");
-            $window.sessionStorage.removeItem("sessionUser");
-            $window.sessionStorage.removeItem("remember");
-        };
+			StorageService.set("session", JSON.stringify(session));
+		};
 
-        return factory;
-    }
+		this.destroy = function() {
+			session = {};
 
-    SessionService.$inject = ['$window', '$rootScope'];
+			StorageService.del("session");
+			StorageService.del("user");
+			StorageService.del("rememberMe", "local");
+		};
 
-    presApp.service('SessionService', SessionService);
+		return factory;
+	}
+
+	SessionService.$inject = ['$window', '$rootScope', 'StorageService'];
+
+	presApp.service('SessionService', SessionService);
 
 }());

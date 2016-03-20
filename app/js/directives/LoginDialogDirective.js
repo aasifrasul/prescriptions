@@ -1,8 +1,7 @@
 presApp.directive('loginDialog', function(AUTH_EVENTS) {
     return {
         restrict: 'A',
-        template: '<div ng-if="visible"
-                    ng-include="\'views/login.html\'">',
+        template: '<div ng-if="visible" ng-include="\'views/login.html\'">',
         link: function(scope) {
             var showDialog = function() {
                 scope.visible = true;

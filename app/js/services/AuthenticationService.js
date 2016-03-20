@@ -1,81 +1,54 @@
 (function() {
 
-    'use strict';
+	'use strict';
 
-    function AuthenticationService($http, $q, $window, $injector) {
-        var userInfo = null,
-            authenticatedUser = null,
-            authService = {};
+	function AuthenticationService($window, $injector, GenericHTTPCallService) {
+		var userInfo = null,
+			apiCall = GenericHTTPCallService.genericFactory,
+			authenticatedUser = null,
+			factory = {};
 
-        authService.login = function(payload) {
-            var deferred = $q.defer();
+		factory.login = function(payload) {
+			return apiCall('post', 'login', payload);
+		}
 
-            $http.post("login", payload).then(function(result) {
-                deferred.resolve(result);
-            }, function(error) {
-                deferred.reject(error);
-            });
+		factory.verifyUsername = function(payload) {
+			return apiCall('post', 'verifyUsername', payload);
+		}
 
-            return deferred.promise;
-        }
+		factory.register = function(payload) {
+			apiCall('post', 'register', payload);
+			$location.path('/login');
+		};
 
-        authService.verifyUsername = function(payload) {
-            var deferred = $q.defer();
+		factory.getAuthenticatedUser = function() {
+			if (!_.isObject(authenticatedUser)) {
+				authenticatedUser = $window.sessionStorage["authenticatedUser"];
+				authenticatedUser = (authenticatedUser) ? JSON.parse(authenticatedUser) : null;
+			}
 
-            $http.post("verifyUsername", payload).then(function(result) {
-                deferred.resolve(result);
-            }, function(error) {
-                deferred.reject(error);
-            });
+			return authenticatedUser;
+		}
 
-            return deferred.promise;
-        }
+		factory.getUserInfo = function() {
+			if (!_.isObject(userInfo)) {
+				userInfo = $window.sessionStorage["userInfo"];
+				userInfo = (userInfo) ? JSON.parse(userInfo) : null;
+			}
 
-        authService.register = function(payload) {
-            var deferred = $q.defer();
+			return userInfo;
+		}
 
-            http.post("register", payload).then(function(result) {
-                if (result.errors) {
-                    deferred.reject(error);
-                    console.log(result.errors);
-                } else {
-                    deferred.resolve(result);
-                    $location.path('/login');
-                }
+		factory.isLoggedIn = function() {
+			var userInfo = factory.getUserInfo();
+			return (userInfo && userInfo.authToken) ? true : false;
+		};
 
-            });
+		return factory;
+	}
 
-            return deferred.promise;
-        };
+	AuthenticationService.$inject = ['$window', '$injector', 'GenericHTTPCallService'];
 
-        authService.getAuthenticatedUser = function() {
-            if (!_.isObject(authenticatedUser)) {
-                authenticatedUser = $window.sessionStorage["authenticatedUser"];
-                authenticatedUser = (authenticatedUser) ? JSON.parse(authenticatedUser) : null;
-            }
-
-            return authenticatedUser;
-        }
-
-        authService.getUserInfo = function() {
-            if (!_.isObject(userInfo)) {
-                userInfo = $window.sessionStorage["userInfo"];
-                userInfo = (userInfo) ? JSON.parse(userInfo) : null;
-            }
-
-            return userInfo;
-        }
-
-        authService.isLoggedIn = function() {
-            var userInfo = authService.getUserInfo();
-            return (userInfo && userInfo.authToken) ? true : false;
-        };
-
-        return authService;
-    }
-
-    AuthenticationService.$inject = ['$http', '$q', '$window', '$injector'];
-
-    presApp.service('AuthenticationService', AuthenticationService);
+	presApp.service('AuthenticationService', AuthenticationService);
 
 }());

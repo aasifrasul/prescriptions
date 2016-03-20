@@ -1,86 +1,85 @@
 (function() {
 
-    'use strict';
+	'use strict';
 
-    function LoginController($rootScope, $scope, $location, AuthenticationService, SessionService, $uibModal, UsersService) {
-        var modalInstance;
-        $scope.loginError = false;
-        $scope.credentials = {
-            username: '',
-            password: ''
-        };
+	function LoginController($rootScope, $scope, $location, $uibModal, AuthenticationService, SessionService, UsersService) {
+		var modalInstance;
+		$scope.loginError = true;
+		$scope.credentials = {
+			username: null,
+			password: null,
+			remember: SessionService.getLocalStorageByKey('rememberMe')
+		};
 
-        if (SessionService.getRemember()) {
-            $location.path('/appointments');
-        }
+		$scope.init = function() {
+			if (SessionService.getSession().id) {
+				$location.path('/appointments');
+			}
+		}
 
-        $scope.login = function() {
-            var username = $scope.credentials.username;
-            var password = $scope.credentials.password;
-            var remember = $scope.credentials.remember;
+		$scope.login = function() {
+			var username = $scope.credentials.username;
+			var password = $scope.credentials.password;
+			var remember = $scope.credentials.remember;
 
-            if (!username || !password) {
-                if (!username) {
-                    $scope.loginform.username.$dirty = true;
-                    $scope.loginform.username.$invalid = true;
-                }
+			if (!username || !password) {
+				if (!username) {
+					$scope.loginform.username.$dirty = true;
+					$scope.loginform.username.$invalid = true;
+				}
 
-                if (!password) {
-                    $scope.loginform.password.$dirty = true;
-                    $scope.loginform.password.$invalid = true;
-                }
+				if (!password) {
+					$scope.loginform.password.$dirty = true;
+					$scope.loginform.password.$invalid = true;
+				}
 
-                return false;
-            }
+				return false;
+			}
 
-            AuthenticationService.login($scope.credentials).then(function(response) {
-                if (response && response.authToken) {
+			remember && SessionService.setLocalStorageByKey('rememberMe', true);
 
-                    if (remember) {
-                        SessionService.setRemember(true);
-                    }
+			AuthenticationService.login($scope.credentials).then(function(response) {
+				if (response && response.authToken) {
+					$scope.$emit('authSuccess', response);
+					$scope.loginError = false;
+					$location.path('/appointments');
+				} else {
+					$scope.$emit('authFailure', response);
+				}
+			});
+		}
 
-                    $scope.$emit('authSuccess', response);
-                    $location.path('/appointments');
-                } else {
-                    $scope.$emit('authFailure', response);
-                    $scope.loginError = true;
-                }
-            });
-        }
+		$scope.register = function() {
+			modalInstance ? modalInstance.dismiss() : '';
 
-        $scope.register = function() {
-            modalInstance ? modalInstance.dismiss() : '';
+			modalInstance = $uibModal.open({
+				templateUrl: 'views/register.html',
+				controller: 'ModalInstanceController',
+				resolve: {
+					data: function() {
+						return null;
+					}
+				}
+			});
 
-            modalInstance = $uibModal.open({
-                templateUrl: 'views/register.html',
-                controller: 'ModalInstanceController',
-                resolve: {
-                    data: function() {
-                        return null;
-                    }
-                }
-            });
+			modalInstance.result.then(function(data) {
+				UsersService.register(data).then(function(response) {
+					if (response) {
+						$location.path('/login');
+					}
+				});
 
-            modalInstance.result.then(function(data) {
-                UsersService.register(data).then(function(response) {
-                    if (response) {}
-                });
+			}, function() {
+				console.log('Modal dismissed at: ' + new Date());
+			});
+		};
 
-            }, function() {
-                console.log('Modal dismissed at: ' + new Date());
-            });
-        };
+		$scope.init();
+		console.log($scope);
+	}
 
-        $scope.showscope = function(e) {
-            console.log(angular.element(e.srcElement).$scope());
-        };
+	LoginController.$inject = ['$rootScope', '$scope', '$location', '$uibModal', 'AuthenticationService', 'SessionService', '$uibModal', 'UsersService'];
 
-        console.log($scope);
-    }
-
-    LoginController.$inject = ['$rootScope', '$scope', '$location', 'AuthenticationService', 'SessionService', '$uibModal', 'UsersService'];
-
-    presApp.controller('LoginController', LoginController);
+	presApp.controller('LoginController', LoginController);
 
 }());
