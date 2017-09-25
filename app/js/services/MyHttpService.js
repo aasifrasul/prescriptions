@@ -1,6 +1,6 @@
 (function() {
 
-	presApp.factory('myHttp', ['$injector',
+	app.factory('myHttp', ['$injector',
 	    function($injector) {
 	        $http = $injector.get('$http');
 

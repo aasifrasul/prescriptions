@@ -1,6 +1,6 @@
 (function() {
 
-    presApp.factory('sessionRecoverer', ['$q', '$injector',
+    app.factory('sessionRecoverer', ['$q', '$injector',
         function($q, $injector) {
             var sessionRecoverer = {
                 responseError: function(response) {

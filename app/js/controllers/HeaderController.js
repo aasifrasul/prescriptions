@@ -1,32 +1,64 @@
 (function() {
 
-    'use strict';
+	'use strict';
 
-    presApp.controller('HeaderController', ['$rootScope', '$scope', '$location', 'SessionService',
-        function($rootScope, $scope, $location, SessionService) {
-            $scope.userIsAuthenticated = false;
+	var app = angular.module('app');
 
-            $rootScope.$on('authSuccess', function(e, data) {
-                $scope.userIsAuthenticated = true;
-                $scope.user = data.user;
-            });
+	var HeaderController = function($rootScope, $scope, $location, AuthenticationService) {
+		var vm = this;
+		var handleAuthSuccess = function(e, data) {
+			vm.userIsAuthenticated = true;
+			vm.user = data.user;
+		};
 
-            if (!SessionService.getIsUserAuthenticated()) {
-                $scope.userIsAuthenticated = false;
-                $location.path('/login');
-            } else {
-                $scope.user = SessionService.getUser();
-                $scope.userIsAuthenticated = true;
-            }
+		vm.userIsAuthenticated = false;
 
-            $scope.logout = function() {
-                $scope.$emit('logoutEvent');
-                $location.path('/login');
-                $scope.userIsAuthenticated = false;
-            };
+		vm.links = [{
+			'name': 'Appointments',
+			'link': 'appointments'
+		}, {
+			'name': 'Prescriptions',
+			'link': 'prescriptions'
+		}, {
+			'name': 'My Profile',
+			'link': 'profile'
+		}, {
+			'name': 'Contact',
+			'link': 'misc'
+		}];
 
-            console.log($scope);
-        }
-    ]);
+		$rootScope.$on('authSuccess', handleAuthSuccess);
+
+		if (AuthenticationService.isLoggedIn()) {
+			vm.user = AuthenticationService.getAuthenticatedUser();
+			vm.userIsAuthenticated = true;
+		} else {
+			vm.userIsAuthenticated = false;
+			$location.path('/login');
+		}
+
+		vm.logout = function() {
+			vm.userIsAuthenticated = false;
+			vm.user = {};
+
+			$scope.$emit('logoutEvent');
+			$location.path('/login');
+		};
+
+		vm.redirect = function(route) {
+			route = route || '/login';
+			$location.path(route);
+		}
+
+		// vm.showscope = function(e) {
+		// 	console.log(angular.element(e.srcElement).vm());
+		// }
+
+		console.log($scope);
+	}
+
+	HeaderController.$inject = ['$rootScope', '$scope', '$location', 'AuthenticationService'];
+
+	app.controller('HeaderController', HeaderController);
 
 }());

@@ -16,6 +16,8 @@
 
 (function() {
 
+    "use strict";
+
     /**
      * Config
      */

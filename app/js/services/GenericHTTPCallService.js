@@ -2,12 +2,29 @@
 
 	'use strict';
 
+    var app = angular.module('app');
+
 	function GenericHTTPCallService($http, $q) {
 		var factory = {};
 
 		factory.genericFactory = function(type, url, payload) {
 			var deferred = $q.defer();
-			var call = ('get' == type) ? $http.get(url) : $http.post(url, payload);
+			var call;
+
+			switch(type) {
+				case 'get':
+					call = $http.get(url);
+					break;
+				case 'post':
+					call = $http.post(url, payload);
+					break;
+				case 'put':
+					call = $http.put(url, payload);
+					break;
+				case 'delete':
+					call = $http.delete(url);
+					break;
+			}
 
 			call.success(function(data) {
 				deferred.resolve(call.$$state.value);
@@ -24,6 +41,6 @@
 
 	GenericHTTPCallService.$inject = ['$http', '$q'];
 
-	presApp.factory('GenericHTTPCallService', GenericHTTPCallService);
+	app.factory('GenericHTTPCallService', GenericHTTPCallService);
 
 }());

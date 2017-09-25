@@ -2,7 +2,7 @@
 
     'use strict';
 
-    presApp.directive('ensureUnique', ['$http',
+    app.directive('ensureUnique', ['$http',
         function($http) {
             return {
                 require: 'ngModel',

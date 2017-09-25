@@ -14,19 +14,22 @@
     some footer
 </div>
  */
-presApp.directive('elementFocus', function($timeout) {
-    return {
-        scope: {
-            trigger: '@elementFocus'
-        },
-        link: function(scope, element) {
-            scope.$watch('trigger', function(value) {
-                if (value === "true") {
-                    $timeout(function() {
-                        element[0].focus();
-                    });
-                }
-            });
-        }
-    };
-});
+(function() {
+	"use strict";
+	app.directive('elementFocus', function($timeout) {
+		return {
+			scope: {
+				trigger: '@elementFocus'
+			},
+			link: function(scope, element) {
+				scope.$watch('trigger', function(value) {
+					if (value === "true") {
+						$timeout(function() {
+							element[0].focus();
+						});
+					}
+				});
+			}
+		};
+	});
+})();

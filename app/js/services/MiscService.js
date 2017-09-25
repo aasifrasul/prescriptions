@@ -1,31 +1,21 @@
 (function() {
 
-    'use strict';
+	'use strict';
 
-    presApp.service('MiscService', ['$q', '$http', '$location', '$window',
-        function($q, $http, $location, $window) {
-            var factory = {};
+    var app = angular.module('app');
 
-            factory.createContactUs = function(payload) {
-                var defer = $q.defer();
+	var MiscService = function(GenericHTTPCallService) {
+		var factory = {};
 
-                $http.post("createContactUs", payload).then(function(result) {
+		factory.createContactUs = function(payload) {
+			return http('post', 'createContactUs', payload);
+		};
 
-                    if (result.errors) {
-                        defer.reject(result.errors);
-                        console.log(result.errors);
-                    } else {
-                        defer.resolve(result);
-                        $location.path('/login');
-                    }
+		return factory;
+	}
 
-                });
+	MiscService.$inject = ['GenericHTTPCallService'];
 
-                return defer.promise;
-            };
-
-            return factory;
-        }
-    ]);
+	app.service('MiscService', MiscService);
 
 }());

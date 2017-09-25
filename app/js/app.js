@@ -1,28 +1,35 @@
-'use strict';
-
-var presApp = angular.module('presApp', [
-    'ngRoute',
-    'ui.bootstrap',
-    'ui.bootstrap.modal',
-    'ui.bootstrap.datetimepicker',
-    'ui.bootstrap.showErrors',
-    'jcs-autoValidate'
-]);
-
 (function() {
-    var baseUrl = '';
-    presApp.constant('baseUrl', 'http://localhost:9000/');
 
-    presApp.constant('AUTH_EVENTS', {
-        loginSuccess: 'auth-login-success',
-        loginFailed: 'auth-login-failed',
-        logoutSuccess: 'auth-logout-success',
-        sessionTimeout: 'auth-session-timeout',
-        notAuthenticated: 'auth-not-authenticated',
-        notAuthorized: 'auth-not-authorized'
-    });
+	'use strict';
 
-    /*presApp.service('modHttp', ['$http',
+	var baseUrl = '';
+
+	var app = angular.module('app', [
+		'ngRoute',
+		'ui.bootstrap',
+		'ui.bootstrap.modal',
+		'ui.bootstrap.datetimepicker',
+		'ui.bootstrap.showErrors',
+		'jcs-autoValidate'
+	]);
+
+	app.value('apiBaseUrl', 'http://localhost:9000/');
+
+	String.prototype.capitalize = function() {
+		return this.charAt(0).toUpperCase() + this.slice(1);
+	}
+
+	app.constant('AUTH_EVENTS', {
+		loginSuccess: 'auth-login-success',
+		loginFailed: 'auth-login-failed',
+		logoutSuccess: 'auth-logout-success',
+		sessionTimeout: 'auth-session-timeout',
+		notAuthenticated: 'auth-not-authenticated',
+		notAuthorized: 'auth-not-authorized'
+	});
+
+/*
+	app.service('modHttp', ['$http',
         function($http) {
 
             this.http = function(params) {
@@ -31,67 +38,11 @@ var presApp = angular.module('presApp', [
             }
 
         }
-    ]);*/
-
-    presApp.config(['showErrorsConfigProvider',
-        function(showErrorsConfigProvider) {
-            showErrorsConfigProvider.showSuccess(true);
-        }
     ]);
 
-    presApp.config(['$routeProvider',
-
+    app.config(['$routeProvider',
         function($routeProvider) {
-            $routeProvider.
-            when('/home', {
-                templateUrl: 'views/home.html',
-                controller: 'HomeController'
-            }).
-            when('/appointments', {
-                templateUrl: 'views/appointments.html',
-                controller: 'AppointmentsController'
-            }).
-            when('/prescriptions', {
-                templateUrl: 'views/prescriptions.html',
-                controller: 'PrescriptionsController'
-            }).
-            when('/login', {
-                templateUrl: 'views/login.html',
-                controller: 'LoginController'
-            }).
-            when('/register', {
-                templateUrl: 'views/register.html',
-                controller: 'RegisterController'
-            }).
-            when('/contactus', {
-                templateUrl: 'views/contactus.html',
-                controller: 'MiscController'
-            }).
-            when('/forgotpassword', {
-                templateUrl: 'views/forgotpassword.html',
-                controller: 'ForgotPasswordController'
-            }).
-            when('/myprofile', {
-                templateUrl: 'views/myprofile.html',
-                controller: 'ProfileController'
-            }).
-            when('/prescriptions', {
-                templateUrl: 'views/prescriptions.html',
-                controller: 'PrescriptionsController'
-            }).
-            when('/prescriptions/:prescriptionId', {
-                templateUrl: 'views/prescription-detail.html',
-                controller: 'PrescriptionsDetailController'
-            }).
-            otherwise({
-                redirectTo: '/appointments'
-            });
-        }
-    ]);
-    /*
-    presApp.config(['$routeProvider',
-        function($routeProvider) {
-            var injector = angular.injector(['ng', 'presApp']);
+            var injector = angular.injector(['ng', 'app']);
             $rootScope = injector.get('$rootScope');
             location = injector.get('$location');
 
@@ -111,154 +62,137 @@ var presApp = angular.module('presApp', [
             });
         }
     ]);
-*/
-    /*presApp.config(['RestangularProvider',
-        function(RestangularProvider) {
-
-            if (window.location.hostname == "localhost") {
-                baseUrl = 'http://localhost:9000/';
-            } else {
-                var deployedAt = window.location.href.substring(0, window.location.href);
-                baseUrl = deployedAt + "/api/rest/";
-            }
-
-            var baseUrl = RestangularProvider.setBaseUrl(baseUrl);
-            console.log(baseUrl);
-            RestangularProvider.setExtraFields(['name']);
-            RestangularProvider.setResponseExtractor(function(response, operation) {
-                return response.data;
-            });
-
-            RestangularProvider.addElementTransformer('accounts', false, function(element) {
-                element.accountName = 'Changed';
-                return element;
-            });
-
-            RestangularProvider.setDefaultHttpFields({
-                cache: true
-            });
-            RestangularProvider.setMethodOverriders(["put", "patch"]);
-
-            // In this case we are mapping the id of each element to the _id field.
-            // We also change the Restangular route.
-            // The default value for parentResource remains the same.
-            RestangularProvider.setRestangularFields({
-                id: "_id",
-                route: "restangularRoute",
-                selfLink: "self.href"
-            });
-
-            RestangularProvider.setRequestSuffix('.json');
-
-            // Use Request interceptor
-            RestangularProvider.setRequestInterceptor(function(element, operation, route, url) {
-                delete element.name;
-                return element;
-            });
-
-            // ..or use the full request interceptor, setRequestInterceptor's more powerful brother!
-            RestangularProvider.setFullRequestInterceptor(function(element, operation, route, url, headers, params, httpConfig) {
-                delete element.name;
-                return {
-                    element: element,
-                    params: _.extend(params, {
-                        single: true
-                    }),
-                    headers: headers,
-                    httpConfig: httpConfig
-                };
-            });
-
-        }
-    ]);*/
-
-    /*presApp.config(['localStorageServiceProvider',
+	
+	app.config(['localStorageServiceProvider',
         function(localStorageServiceProvider) {
             localStorageServiceProvider
                 .setPrefix('pres')
                 .setStorageType('localStorage')
                 .setNotify(false, false);
         }
-    ]);*/
-
-    presApp.config(['$httpProvider',
-        function(httpProvider) {
-            delete httpProvider.defaults.headers.common['X-Requested-With'];
-            //httpProvider.interceptors.push('middleware');
-            //httpProvider.interceptors.push('SessionInjector');
-        }
     ]);
+*/
 
-    presApp.config(['$provide', '$httpProvider',
-        function($provide, $httpProvider) {
-            //delete $httpProvider.defaults.headers.common['X-Requested-With'];
+	var routes = ['home', 'appointments', 'prescriptions', 'login', 'register', 'misc', 'forgotPassword', 'profile'];
 
-            // Intercept http calls.
-            $provide.factory('MyHttpInterceptor', ['$q', '$window', '$injector', 'SessionService',
-                function($q, $window, $injector, SessionService) {
-                    return {
-                        // On request success
-                        request: function(config) {
-                            //var injector = angular.injector(['ng', 'presApp']);
-                            //var SessionService = injector.get('SessionService');
-                            var session = SessionService.getSession() || {};
+	var buildRouteObject = function(comp) {
+		return {
+			templateUrl: 'views/' + comp + '.html',
+			controller: comp.capitalize() + 'Controller',
+			controllerAs: 'vm'
+		}
+	};
 
-                            if (session.id) {
-                                config.headers['x-session-token'] = session.id;
-                                config.headers['x-key'] = session.userId;
-                            }
+	var routeDefs = function(routeProvider) {
+		angular.forEach(routes, function(route) {
+			var routeObject = buildRouteObject(route);
+			routeProvider.when('/' + route, routeObject);
+		});
+		routeProvider
+			.otherwise({
+				redirectTo: '/appointments'
+			});
+	};
 
-                            if (-1 == config.url.indexOf(".html") && -1 == config.url.indexOf("http")) {
-                                config.url = "http://localhost:9000/" + config.url;
-                            }
+	// Intercept http calls.
+	var MyHttpInterceptor = function($q, SessionService, apiBaseUrl) {
+		return {
+			// On request success
+			request: function(config) {
+				//var injector = angular.injector(['ng', 'app']);
+				//var SessionService = injector.get('SessionService');
+				var session = SessionService.getSession() || {};
 
-                            // Return the config or wrap it in a promise if blank.
-                            return config || $q.when(config);
-                        },
+				if (session.id) {
+					config.headers['x-session-token'] = session.id;
+					config.headers['x-key'] = session.userId;
+				}
 
-                        // On request failure
-                        requestError: function(rejection) {
-                            console.log(rejection); // Contains the data about the error on the request.
+				if (-1 != config.url.indexOf("templates/datetimepicker.html")) {
+					config.url = "lib/angular-bootstrap-datetimepicker/src/" + config.url;
+				} else if (-1 == config.url.indexOf(".html") && -1 == config.url.indexOf("http")) {
+					config.url = apiBaseUrl + config.url;
+				}
 
-                            // Return the promise rejection.
-                            return rejection;
-                        },
+				// Return the config or wrap it in a promise if blank.
+				return config || $q.when(config);
+			},
 
-                        // On response success
-                        response: function(response) {
-                            // Return the response or promise.
-                            if (response) {
-                                if (angular.isObject(response.data)) {
-                                    return response.data;
-                                }
-                                return response;
-                            }
-                            return $q.when(response);
-                        },
+			// On request failure
+			requestError: function(rejection) {
+				console.log(rejection); // Contains the data about the error on the request.
 
-                        // On response failture
-                        responseError: function(rejection) {
-                            console.log(rejection); // Contains the data about the error.
+				// Return the promise rejection.
+				return rejection;
+			},
 
-                            // Return the promise rejection.
-                            return rejection;
-                        }
-                    };
-                }
-            ]);
-            // Add the interceptor to the $httpProvider.
-            $httpProvider.interceptors.push('MyHttpInterceptor');
-        }
-    ]);
+			// On response success
+			response: function(response) {
+				// Return the response or promise.
+				if (response) {
+					if (angular.isObject(response.data)) {
+						return response.data;
+					}
+					return response;
+				}
+				return $q.when(response);
+			},
+
+			// On response failture
+			responseError: function(rejection) {
+				console.log(rejection); // Contains the data about the error.
+
+				// Return the promise rejection.
+				return rejection;
+			}
+		};
+	}
+
+	app.config(['$provide', '$locationProvider', '$routeProvider', '$httpProvider', '$compileProvider', 'showErrorsConfigProvider',
+		function($provide, $locationProvider, $routeProvider, $httpProvider, $compileProvider, showErrorsConfigProvider) {
+			showErrorsConfigProvider.showSuccess(true);
+			$compileProvider.debugInfoEnabled(false);
+			delete $httpProvider.defaults.headers.common['X-Requested-With'];
+
+			routeDefs($routeProvider);
+			//httpProvider.interceptors.push('middleware');
+			//httpProvider.interceptors.push('SessionInjector');
+
+			$locationProvider.html5Mode({
+				enabled: true,
+				requireBase: true,
+				rewriteLinks: true
+			});
+
+			MyHttpInterceptor.$inject = ["$q", "SessionService", "apiBaseUrl"];
+
+			$provide.factory('MyHttpInterceptor', MyHttpInterceptor);
+
+			// Add the interceptor to the $httpProvider.
+			$httpProvider.interceptors.push('MyHttpInterceptor');
+		}
+	]);
+
 /*
-    presApp.run([
+	app.run(['$location', '$anchorScroll',
+		function($location, $anchorScroll) {
+			console.log('Hi');
+			when the route is changed scroll to the proper element.
+			$rootScope.$on('$routeChangeSuccess', function(newRoute, oldRoute) {
+				console.log('Hi');
+				if ($location.hash()) $anchorScroll();
+			});
+		}
+	]);
+
+    app.run([
         'bootstrap3ElementModifier',
         function(bootstrap3ElementModifier) {
             bootstrap3ElementModifier.enableValidationStateIcons(true);
         }
     ]);
 
-    presApp.run([
+    app.run([
         'validator',
         function(validator) {
             validator.setValidElementStyling(false);

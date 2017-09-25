@@ -2,7 +2,9 @@
 
     'use strict';
 
-    presApp.service('GeolocationService', ['$q', '$http',
+    var app = angular.module('app');
+
+    app.service('GeolocationService', ['$q', '$http',
         function($q, $http) {
             var factory = {};
             var locality = ["locality", "political"];

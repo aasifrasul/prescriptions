@@ -1,80 +1,38 @@
 (function() {
 
-    'use strict';
+	'use strict';
 
-    function PrescriptionsService($q, $http, SessionService) {
-        var factory = {};
+    var app = angular.module('app');
 
-        factory.create = function(payload) {
-            var defer = $q.defer();
-            payload.doctor_name = SessionService.getUser().name;
-            payload.doctor_id = SessionService.getUser()._id;
-            delete payload._id;
+	var PrescriptionsService = function(SessionService, GenericHTTPCallService) {
+		var factory = {};
+		var http = GenericHTTPCallService.genericFactory;
 
-            $http.post("api/v1/prescription", payload).then(function(result) {
-                if (result.errors) {
-                    defer.reject(result.errors);
-                    console.log(result.errors);
-                } else {
-                    defer.resolve(result);
-                }
-            });
+		factory.create = function(payload) {
+			payload.doctor_name = SessionService.getUser().name;
+			payload.doctor_id = SessionService.getUser()._id;
+			delete payload._id;
 
-            return defer.promise;
-        };
+			return http('post', 'api/v1/prescription', payload);
+		};
 
-        factory.update = function(payload) {
-            var defer = $q.defer();
+		factory.update = function(payload) {
+			return http('put', 'api/v1/prescription/' + payload._id, payload);
+		};
 
-            $http.put("api/v1/prescription/" + payload._id, payload).then(function(result) {
-                if (result.errors) {
-                    defer.reject(result.errors);
-                    console.log(result.errors);
-                } else {
-                    defer.resolve(result);
-                }
-            });
+		factory.delete = function(id) {
+			return http('delete', 'api/v1/prescription/' + id);
+		};
 
-            return defer.promise;
-        };
+		factory.fetchPrescriptionsFromByUserId = function(userId, displayType) {
+			return http('get', 'api/v1/prescriptions/' + userId + '/' + displayType);
+		};
 
-        factory.delete = function(id) {
-            var defer = $q.defer();
+		return factory;
+	}
 
-            $http.delete("api/v1/prescription/" + id).then(function(result) {
-                if (result.errors) {
-                    defer.reject(result.errors);
-                    console.log(result.errors);
-                } else {
-                    defer.resolve(result);
-                }
-            });
+	PrescriptionsService.$inject = ['SessionService', 'GenericHTTPCallService'];
 
-            return defer.promise;
-        };
-
-        factory.fetchPrescriptionsByUserId = function(userId) {
-            var defer = $q.defer();
-
-            $http.get("api/v1/prescriptions/" + userId).then(function(result) {
-
-                if (result.errors) {
-                    defer.reject(result.errors);
-                    console.log(result.errors);
-                } else {
-                    defer.resolve(result);
-                }
-
-            });
-
-            return defer.promise;
-        };
-
-        return factory;
-    }
-
-    PrescriptionsService.$inject = ['$q', '$http', 'SessionService'];
-
-    presApp.service('PrescriptionsService', PrescriptionsService);
+	app.service('PrescriptionsService', PrescriptionsService);
 
 }());

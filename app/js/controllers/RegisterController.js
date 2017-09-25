@@ -1,40 +1,44 @@
 (function() {
 
-    'use strict';
+	'use strict';
 
-    presApp.controller('RegisterController', ['$scope', 'UsersService', 'AuthenticationService',
-        function($scope, UsersService, AuthenticationService) {
-            $scope.dupUsernameError = false;
+    var app = angular.module('app');
 
-            $scope.register = function() {
-                $scope.$broadcast('show-errors-check-validity');
+	var RegisterController = function($scope, $injector, UsersService) {
+		$scope.dupUsernameError = false;
 
-                if ($scope.userRegistration.$invalid) {
-                    return;
-                }
+		$scope.register = function() {
+			$scope.$broadcast('show-errors-check-validity');
 
-                UsersService.register($scope.reg);
-            }
+			if ($scope.userRegistration.$invalid) {
+				return;
+			}
 
-            $scope.verifyUsername = function() {
-                //AuthenticationService = injector.get('AuthenticationService');
-                AuthenticationService.verifyUsername({
-                    "username": $scope.reg.username
-                }).then(function(result) {
-                    if (!result.message) {
-                        $scope.dupUsernameError = true;
-                    } else {
-                        $scope.dupUsernameError = false;
-                    }
-                })
-            }
+			UsersService.register($scope.reg);
+		}
 
-            $scope.show$scope = function(e) {
-                console.log(angular.element(e.srcElement).$scope());
-            };
+		$scope.verifyUsername = function() {
+            var AuthenticationService = $injector.get('AuthenticationService');
+			AuthenticationService.verifyUsername({
+				"username": $scope.reg.username
+			}).then(function(result) {
+				if (!result.message) {
+					$scope.dupUsernameError = true;
+				} else {
+					$scope.dupUsernameError = false;
+				}
+			})
+		}
 
-            console.log($scope);
-        }
-    ]);
+		$scope.showscope = function(e) {
+			console.log(angular.element(e.srcElement).$scope());
+		};
+
+		console.log($scope);
+	}
+
+	RegisterController.$inject = ['$scope', '$injector', 'UsersService'];
+
+	app.controller('RegisterController', RegisterController);
 
 }());

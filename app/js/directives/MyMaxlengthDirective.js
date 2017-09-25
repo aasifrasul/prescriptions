@@ -1,24 +1,34 @@
 //<textarea my-maxlength="15" ng-model="result"></textarea>
-presApp.directive('myMaxlength', function() {
-    return {
-        require: 'ngModel',
-        link: function(scope, element, attrs, ngModelCtrl) {
-            var maxlength = Number(attrs.myMaxlength);
 
-            function fromUser(text) {
-                if (text.length > maxlength) {
-                    var transformedInput = text.substring(0, maxlength);
-                    ngModelCtrl.$setViewValue(transformedInput);
-                    ngModelCtrl.$render();
-                    return transformedInput;
-                }
-                return text;
-            }
-            ngModelCtrl.$parsers.push(fromUser);
-        }
-    };
-});
+(function() {
 
+	'use strict';
+
+    var app = angular.module('app');
+
+	app.directive('myMaxlength', function() {
+		var fromUser = function(text) {
+			if (text.length > maxlength) {
+				var transformedInput = text.substring(0, maxlength);
+				ngModelCtrl.$setViewValue(transformedInput);
+				ngModelCtrl.$render();
+				return transformedInput;
+			}
+			return text;
+		};
+
+		var linkFunction = function(scope, element, attrs, ngModelCtrl) {
+			var maxlength = Number(attrs.myMaxlength);
+			ngModelCtrl.$parsers.push(fromUser);
+		};
+
+		return {
+			require: 'ngModel',
+			link: linkFunction
+		};
+	});
+
+})();
 /*
 link: function(scope, element, attrs, ngModelCtrl) {
     var maxlength = Number(attrs.myMaxlength);

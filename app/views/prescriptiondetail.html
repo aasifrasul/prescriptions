@@ -1,14 +1,14 @@
 <div class="text-center">
-    <h3>{{data.patient_name}}</h3>
-    <p>{{data.age}}</p>
-    <p>{{data.gender}}</p>
-    <p>{{data.fee}}</p>
-    <p>{{data.chief_complain}}</p>
-    <p>{{data.medical_history}}</p>
-    <p>{{data.diagnosis}}</p>
-    <p>{{data.diagnosis}}</p>
-    <p>{{data.recommendation}}</p>
-    <p>{{data.medicines}}</p>
-    <p>{{data.date_time}}</p>
-    <button class="btn btn-primary" type="button" ng-click="ok()">OK</button>
+    <h3 ng-bind="vm.data.patient_name"></h3>
+    <p ng-bind="vm.data.age"></p>
+    <p ng-if="!vm.data.gender">Male</p>
+    <p ng-if="vm.data.gender">Female</p>
+    <p ng-bind="vm.data.fee"></p>
+    <p ng-bind="vm.data.chief_complain"></p>
+    <p ng-bind="vm.data.medical_history"></p>
+    <p ng-bind="vm.data.diagnosis"></p>
+    <p ng-bind="vm.data.recommendation"></p>
+    <p ng-bind="vm.data.medicines"></p>
+    <p ng-bind="vm.data.date_time"></p>
+    <button class="btn btn-primary" type="button" ng-click="vm.ok()">OK</button>
 </div>

@@ -1,43 +1,65 @@
-presApp.config(function($provide, $httpProvider) {
+(function() {
 
-    // Intercept http calls.
-    $provide.factory('MyHttpInterceptor', function($q) {
-        return {
-            // On request success
-            request: function(config) {
-                // console.log(config); // Contains the data about the request before it is sent.
+	'use strict';
 
-                // Return the config or wrap it in a promise if blank.
-                return config || $q.when(config);
-            },
+    var app = angular.module('app');
 
-            // On request failure
-            requestError: function(rejection) {
-                // console.log(rejection); // Contains the data about the error on the request.
+	// Intercept http calls.
+	var MyHttpInterceptor = function($q, SessionService) {
+		return {
+			// On request success
+			request: function(config) {
+				//var injector = angular.injector(['ng', 'app']);
+				//var SessionService = injector.get('SessionService');
+				var session = SessionService.getSession() || {};
 
-                // Return the promise rejection.
-                return $q.reject(rejection);
-            },
+				if (session.id) {
+					config.headers['x-session-token'] = session.id;
+					config.headers['x-key'] = session.userId;
+				}
 
-            // On response success
-            response: function(response) {
-                // console.log(response); // Contains the data from the response.
+				if (-1 != config.url.indexOf("templates/datetimepicker.html")) {
+					config.url = "lib/angular-bootstrap-datetimepicker/src/" + config.url;
+				} else if (-1 == config.url.indexOf(".html") && -1 == config.url.indexOf("http")) {
+					config.url = "http://localhost:9000/" + config.url;
+				}
 
-                // Return the response or promise.
-                return response || $q.when(response);
-            },
+				// Return the config or wrap it in a promise if blank.
+				return config || $q.when(config);
+			},
 
-            // On response failture
-            responseError: function(rejection) {
-                // console.log(rejection); // Contains the data about the error.
+			// On request failure
+			requestError: function(rejection) {
+				console.log(rejection); // Contains the data about the error on the request.
 
-                // Return the promise rejection.
-                return $q.reject(rejection);
-            }
-        };
-    });
+				// Return the promise rejection.
+				return rejection;
+			},
 
-    // Add the interceptor to the $httpProvider.
-    $httpProvider.interceptors.push('MyHttpInterceptor');
+			// On response success
+			response: function(response) {
+				// Return the response or promise.
+				if (response) {
+					if (angular.isObject(response.data)) {
+						return response.data;
+					}
+					return response;
+				}
+				return $q.when(response);
+			},
 
-});
+			// On response failture
+			responseError: function(rejection) {
+				console.log(rejection); // Contains the data about the error.
+
+				// Return the promise rejection.
+				return rejection;
+			}
+		};
+	}
+
+	MyHttpInterceptor.$inject = ["$q", "SessionService"];
+
+	app.service('MyHttpInterceptor', MyHttpInterceptor);
+
+}());

@@ -2,27 +2,26 @@
 
     'use strict';
 
-    function ModalInstanceController($scope, $uibModalInstance, data) {
+    var app = angular.module('app');
 
-        $scope.data = data;
+    function ModalInstanceController($uibModalInstance, data) {
+        var vm = this;
 
-        $scope.ok = function() {
-            $uibModalInstance.close($scope.data);
+        vm.data = data;
+
+        vm.ok = function() {
+            $uibModalInstance.close(vm.data);
         };
 
-        $scope.cancel = function() {
+        vm.cancel = function() {
             $uibModalInstance.dismiss('cancel');
         };
 
-        $scope.showscope = function(e) {
-            console.log(angular.element(e.srcElement).$scope());
-        };
-
-        console.log($scope);
+        console.log(vm);
     }
 
-    ModalInstanceController.$inject = ['$scope', '$uibModalInstance', 'data'];
+    ModalInstanceController.$inject = ['$uibModalInstance', 'data'];
 
-    presApp.controller('ModalInstanceController', ModalInstanceController);
+    app.controller('ModalInstanceController', ModalInstanceController);
 
 }());

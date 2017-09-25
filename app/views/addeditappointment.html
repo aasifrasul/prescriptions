@@ -1,116 +1,124 @@
-<div class="container">
-    <button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-    <div class="row">
-        <h4>Please Fill the Appointment Details<button type="button" ng-click="cancel();" class="closealertmodal">&times;</button></h4>
+<div id="myModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
 
-        <form 
-            role="form" 
-            ng-submit="ok()"
-            novalidate="novalidate">
-            <div class="col-lg-6">
-                <!-- <div class="well well-sm"><strong><span class="glyphicon glyphicon-asterisk"></span>Required Field</strong></div> -->
-                <div class="form-group">
-                    <div class="input-group">
-                        <input 
-                            type="text" 
-                            class="form-control" 
-                            ng-model="data.patient_name" 
-                            placeholder="Patient Name"
-                            required
-                            />
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="input-group">
-                        <input 
-                            type="text" 
-                            class="form-control" 
-                            ng-model="data.mobile"
-                            ng-pattern="/^[789]\d{9}$/"
-                            placeholder="Mobile No"
-                            required
-                            />
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="input-group">
-                        Male: <input type="radio" class="form-group" ng-model="data.gender" ng-value="0" />
-                        Female: <input type="radio" class="form-group" ng-model="data.gender" ng-value="1" />
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="input-group">
-                        <input 
-                            type="text" 
-                            class="form-control" 
-                            ng-model="data.purpose"
-                            placeholder="Purpose" 
-                            required
-                            />
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="dropdown">
-                        <a class="dropdown-toggle my-toggle-select" id="dLabel" role="button" data-toggle="dropdown" data-target="#" href="">
-                            <div class="input-append">
-                                <input 
-                                    type="text" 
-                                    class="input-large" 
-                                    data-ng-model="data.date_time"
-                                    />
-                                <span class="add-on">
-                                    <i class="icon-calendar"></i>
-                                </span>
-                            </div>
-                        </a>
-                        <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-                            <datetimepicker 
-                                data-ng-model="data.date_time"
-                                data-datetimepicker-config="{ dropdownSelector: '.my-toggle-select' }"
-                                >
-                            </datetimepicker>
-                        </ul>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="input-group">
-                        <input 
-                            type="text" 
-                            class="form-control" 
-                            ng-model="data.age"
-                            ng-pattern="/[0-9]/"
-                            minlength="1"
-                            maxlength="3"
-                            placeholder="Age"
-                            />
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="input-group">
-                        <input 
-                            type="text" 
-                            class="form-control" 
-                            ng-model="data.email"
-                            ng-pattern="/^[a-z]+[a-z0-9._]+@[a-z]+\.[a-z.]{2,5}$/"
-                            placeholder="Email"
-                            />
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="input-group">
-                        <textarea 
-                            class="form-control" 
-                            ng-model="data.address"
-                            placeholder="Address"
-                            >
-                        </textarea>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <button class="btn btn-primary" type="submit">OK</button>
-                    <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
-                </div>
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Please Fill the Appointment Details</h4>
             </div>
-        </form>
+            
+            <form 
+                role="form" 
+                novalidate="novalidate">
+                <div class="col-lg-6 modal-body">
+                    <!-- <div class="well well-sm"><strong><span class="glyphicon glyphicon-asterisk"></span>Required Field</strong></div> -->
+                    <div class="form-group">
+                        <div class="input-group">
+                            <input 
+                                type="text" 
+                                class="form-control" 
+                                ng-model="data.patient_name" 
+                                placeholder="Patient Name"
+                                required
+                                />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group">
+                            <input 
+                                type="text" 
+                                class="form-control" 
+                                ng-model="data.mobile"
+                                ng-pattern="/^[789]\d{9}$/"
+                                placeholder="Mobile No"
+                                required
+                                />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group">
+                            Male: <input type="radio" class="form-group" ng-model="data.gender" ng-value="0" />
+                            Female: <input type="radio" class="form-group" ng-model="data.gender" ng-value="1" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group">
+                            <input 
+                                type="text" 
+                                class="form-control" 
+                                ng-model="data.purpose"
+                                placeholder="Purpose" 
+                                required
+                                />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="dropdown">
+                            <a class="dropdown-toggle my-toggle-select" id="dLabel" role="button" data-toggle="dropdown" data-target="#" href="">
+                                <div class="input-append">
+                                    <input 
+                                        type="text" 
+                                        class="input-large" 
+                                        data-ng-model="data.date_time"
+                                        />
+                                    <span class="add-on">
+                                        <i class="icon-calendar"></i>
+                                    </span>
+                                </div>
+                            </a>
+                            <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                                <datetimepicker 
+                                    data-ng-model="data.date_time"
+                                    data-datetimepicker-config="{ dropdownSelector: '.my-toggle-select' }"
+                                    >
+                                </datetimepicker>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group">
+                            <input 
+                                type="text" 
+                                class="form-control" 
+                                ng-model="data.age"
+                                ng-pattern="/[0-9]/"
+                                minlength="1"
+                                maxlength="3"
+                                placeholder="Age"
+                                />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group">
+                            <input 
+                                type="text" 
+                                class="form-control" 
+                                ng-model="data.email"
+                                ng-pattern="/^[a-z]+[a-z0-9._]+@[a-z]+\.[a-z.]{2,5}$/"
+                                placeholder="Email"
+                                />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group">
+                            <textarea 
+                                class="form-control" 
+                                ng-model="data.address"
+                                placeholder="Address"
+                                >
+                            </textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="form-group">
+                        <button class="btn btn-primary" type="button" ng-click="cancel()">OK</button>
+                        <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
+                    </div>
+                </div>
+            </form>
+            </div>
+        </div>
     </div>
 </div>

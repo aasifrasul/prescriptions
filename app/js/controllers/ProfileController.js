@@ -1,25 +1,27 @@
 (function() {
 
-    'use strict';
+	'use strict';
 
-    function ProfileController($scope, $location, UsersService, SessionService) {
-        $scope.user = SessionService.getUser();
+    var app = angular.module('app');
 
-        $scope.updateProfile = function() {
-            UsersService.updateUser($scope.user).then(function(response) {
-                SessionService.setUser(response.user);
-            });
-        }
+	var ProfileController = function($scope, UsersService, SessionService) {
+		$scope.user = SessionService.getUser();
 
-        $scope.showscope = function(e) {
-            console.log(angular.element(e.srcElement).$scope());
-        };
+		$scope.updateProfile = function() {
+			UsersService.updateUser($scope.user).then(function(response) {
+				SessionService.setUser(response.user);
+			});
+		}
 
-        console.log($scope);
-    }
+		$scope.showscope = function(e) {
+			console.log(angular.element(e.srcElement).$scope());
+		};
 
-    ProfileController.$inject = ['$scope', '$location', 'UsersService', 'SessionService'];
+		console.log($scope);
+	}
 
-    presApp.controller('ProfileController', ProfileController);
+	ProfileController.$inject = ['$scope', 'UsersService', 'SessionService'];
+
+	app.controller('ProfileController', ProfileController);
 
 }());

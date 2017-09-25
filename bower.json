@@ -1,20 +1,23 @@
 {
-    "name": "prescriptions",
-    "description": "An application to digitalise prescriptions",
-    "version": "0.0.0",
-    "homepage": "",
-    "license": "MIT",
-    "private": true,
-    "dependencies": {
-        "angular": "latest",
-        "angular-route": "latest",
-        "bootstrap": "latest",
-        "jquery": "latest",
-        "angular-bootstrap": "latest",
-        "angular-bootstrap-datetimepicker": "latest",
-        "underscore": "latest",
-        "moment": "latest",
-        "restangular": "latest",
-        "angular-auto-validate": "latest"
-    }
+	"name": "prescriptions",
+	"description": "An application to digitalise prescriptions",
+	"version": "0.0.1",
+	"homepage": "",
+	"license": "MIT",
+	"private": true,
+	"dependencies": {
+		"angular": "latest",
+		"angular-route": "latest",
+		"ui-route": "latest",
+		"bootstrap": "latest",
+		"jquery": "latest",
+		"angular-bootstrap": "latest",
+		"angular-bootstrap-datetimepicker": "latest",
+		"underscore": "latest",
+		"moment": "latest",
+		"restangular": "latest",
+		"angular-auto-validate": "latest",
+		"angular-material": "latest",
+		"angular-material-datetimepicker": "latest"
+	}
 }

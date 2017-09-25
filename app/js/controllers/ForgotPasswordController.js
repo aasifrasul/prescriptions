@@ -1,16 +1,20 @@
 (function() {
 
-    'use strict';
+	'use strict';
 
-    presApp.controller('ForgotPasswordController', ['$scope',
-        function(scope) {
+    var app = angular.module('app');
 
-            $scope.showscope = function(e) {
-                console.log(angular.element(e.srcElement).$scope());
-            };
+	var ForgotPasswordController = function($scope) {
 
-            console.log($scope);
-        }
-    ]);
+		$scope.showscope = function(e) {
+			console.log(angular.element(e.srcElement).$scope());
+		};
+
+		console.log($scope);
+	}
+
+	ForgotPasswordController.$inject = ['$scope'];
+
+	app.controller('ForgotPasswordController', ForgotPasswordController);
 
 }());

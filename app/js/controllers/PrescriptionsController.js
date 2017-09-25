@@ -1,107 +1,146 @@
 (function() {
 
-    'use strict';
+	'use strict';
 
-    function PrescriptionsController($scope, $location, $uibModal, PrescriptionsService, SessionService) {
-        var modalInstance = null;
-        $scope.user = SessionService.getUser();
+    var app = angular.module('app');
 
-        function fetchPrescriptions(userId) {
-            PrescriptionsService.fetchPrescriptionsByUserId(userId).then(function(response) {
-                if (response && response.prescriptions) {
-                    console.log(response);
-                    $scope.prescriptions = response.prescriptions;
+	var PrescriptionsController = function($rootScope, $uibModal, PrescriptionsService, SessionService) {
+        var vm = this;
+		var modalInstance = null;
+		var user = SessionService.getUser();
+
+        var resolve = function(data) {
+            return {
+                data: function() {
+                    return data;
                 }
-            });
-        }
-
-        fetchPrescriptions($scope.user._id);
-
-        $scope.create = function(size) {
-            closeModal();
-
-            modalInstance = $uibModal.open({
-                templateUrl: 'views/addeditprescription.html',
-                controller: 'ModalInstanceController',
-                windowClass: 'large-Modal',
-                resolve: {
-                    data: function() {
-                        return null;
-                    }
-                }
-            });
-
-            modalInstance.result.then(function(data) {
-                PrescriptionsService.create(data).then(function(response) {
-                    if (response) {
-                        fetchPrescriptions($scope.user._id);
-                        document.location.reload();
-                    }
-                })
-
-            }, function() {
-                console.log('Modal dismissed at: ' + new Date());
-            });
+            }
         };
 
-        $scope.editPrescription = function(index) {
-            closeModal();
+		var closeModal = function() {
+			modalInstance ? modalInstance.dismiss() : '';
+		};
 
-            modalInstance = $uibModal.open({
-                templateUrl: 'views/addeditprescription.html',
-                controller: 'ModalInstanceController',
-                windowClass: 'large-Modal',
-                resolve: {
-                    data: function() {
-                        return $scope.prescriptions[index];
-                    }
-                }
-            });
-
-            modalInstance.result.then(function(data) {
-                PrescriptionsService.update(data).then(function(response) {
-                    if (response) {
-                        fetchPrescriptions($scope.user._id);
-                        document.location.reload();
-                    }
-                })
-
-            }, function() {
-                console.log('Modal dismissed at: ' + new Date());
-            });
+        var modalClosed = function() {
+            console.log('Modal dismissed at: ' + new Date());
         };
 
-        $scope.deletePrescription = function(index) {
-            PrescriptionsService.delete($scope.prescriptions[index]._id).then(function(response) {
-                if (response) {
-                    delete $scope.prescriptions[index];
-                }
-            });
-        }
+		var fetchPrescriptions = function(displayType) {
+			PrescriptionsService.fetchPrescriptionsFromByUserId(user._id, displayType).then(function(response) {
+				if (response && response.prescriptions) {
+                    vm.currentPage = 1;
+					vm.totalPrescriptions = response.prescriptions;
+                    setPrescriptions();
+				}
+			});
+		};
 
-        $scope.detail = function(index) {
-            closeModal();
-
-            modalInstance = $uibModal.open({
-                templateUrl: 'views/prescriptiondetail.html',
-                controller: 'ModalInstanceController',
-                windowClass: 'large-Modal',
-                resolve: {
-                    data: function() {
-                        return $scope.prescriptions[index];
-                    }
-                }
-            });
+        var setPrescriptions = function() {
+            vm.prescriptions = vm.totalPrescriptions.slice(0, vm.itemsPerPage);
         };
 
-        $scope.showscope = function(e) {
-            console.log(angular.element(e.srcElement).$scope());
-        }
+        vm.displayType = SessionService.getSessionStorageByKey('displayType') || 'Today';
+        vm.displayTypes = ['Today', 'Yesterday', 'Last Week', 'Last Month', 'Last Year', 'All'];
+        vm.itemsPerPage = 5;
+        vm.currentPage = 1;
+        vm.prescriptions = [];
+        vm.totalPrescriptions = [];
 
-    }
+        $rootScope.$on("itemsPerPage", function(e, data) {
+            vm.itemsPerPage = data;
+            setPrescriptions();
+        });
 
-    PrescriptionsController.$inject = ['$scope', '$location', '$uibModal', 'PrescriptionsService', 'SessionService'];
+        $rootScope.$on("currentPage", function(e, data) {
+            vm.setPage(data);
+            vm.pageChanged();
+        });
 
-    presApp.controller('PrescriptionsController', PrescriptionsController);
+        vm.setPage = function(pageNo) {
+            vm.currentPage = pageNo;
+            console.log('Page changed to: ' + vm.currentPage);
+        };
+
+        vm.pageChanged = function() {
+            vm.prescriptions = vm.totalPrescriptions.slice((vm.currentPage - 1) * vm.itemsPerPage, vm.currentPage * vm.itemsPerPage);
+        };
+
+		vm.create = function(size) {
+			closeModal();
+
+			modalInstance = $uibModal.open({
+				templateUrl: 'views/addeditprescription.html',
+				controller: 'ModalInstanceController',
+				windowClass: 'large-Modal',
+				resolve: resolve(vm.appointments[index])
+			});
+
+			modalInstance.result.then(function(data) {
+				PrescriptionsService.create(data).then(function(response) {
+					if (response) {
+						fetchPrescriptions(vm.displayType);
+						document.location.reload();
+					}
+				})
+
+			},
+            modalClosed);
+		};
+
+		vm.edit = function(index) {
+			closeModal();
+
+			modalInstance = $uibModal.open({
+				templateUrl: 'views/addeditprescription.html',
+				controller: 'ModalInstanceController',
+				windowClass: 'large-Modal',
+                resolve: resolve(vm.prescriptions[index])
+			});
+
+			modalInstance.result.then(function(data) {
+				PrescriptionsService.update(data).then(function(response) {
+					if (response) {
+						document.location.reload();
+					}
+				})
+
+			},
+            modalClosed);
+		};
+
+		vm.delete = function(index) {
+			PrescriptionsService.delete(vm.prescriptions[index]._id).then(function(response) {
+				if (response) {
+					delete vm.prescriptions[index];
+				}
+			});
+		}
+
+		vm.detail = function(index) {
+			closeModal();
+
+			modalInstance = $uibModal.open({
+				templateUrl: 'views/prescriptiondetail.html',
+				controller: 'ModalInstanceController',
+                controllerAs: 'vm',
+				windowClass: 'large-Modal',
+				resolve: resolve(vm.prescriptions[index])
+			});
+		};
+
+        fetchPrescriptions(vm.displayType);
+
+        vm.fetchPrescriptions = fetchPrescriptions;
+
+		vm.showscope = function(e) {
+			console.log(angular.element(e.srcElement).vm());
+		}
+
+        console.log(vm);
+	}
+
+	PrescriptionsController.$inject = ['$rootScope', '$uibModal', 'PrescriptionsService', 'SessionService'];
+
+	app.controller('PrescriptionsController', PrescriptionsController);
 
 }());

@@ -2,7 +2,9 @@
 
 	'use strict';
 
-	function DateTimeService($filter, $window) {
+    var app = angular.module('app');
+
+	function DateTimeService() {
 		var factory = {};
 		var currDate = new Date();
 		var weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -62,9 +64,24 @@
 			return day + text;
 		};
 
+		factory.buildDateTimeText = function(date) {
+			if (!date) date = currDate;
+			var dateText = factory.getHours12Format(date);
+
+			dateText += ':' + factory.getFormattedMins(date);
+			dateText += factory.getAmPmText(date);
+			dateText += ' ' + factory.getWeekDay(date);
+			dateText += ' ' + factory.getDayWithPostscript(date);
+			dateText += ' ' + factory.getMonthText(date);
+			dateText += ' ' + date.getFullYear();
+			return dateText;
+		}
+
 		return factory;
 	}
 
-	presApp.service('DateTimeService', DateTimeService);
+	DateTimeService.$inject = [];
+
+	app.service('DateTimeService', DateTimeService);
 
 })();

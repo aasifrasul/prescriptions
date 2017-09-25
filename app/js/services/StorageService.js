@@ -2,6 +2,8 @@
 
 	'use strict';
 
+    var app = angular.module('app');
+
 	function StorageService($window) {
 		var self = this;
 		var factory = {};
@@ -45,6 +47,6 @@
 
 	StorageService.$inject = ['$window'];
 
-	presApp.service('StorageService', StorageService);
+	app.service('StorageService', StorageService);
 
 }());

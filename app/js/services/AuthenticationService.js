@@ -2,28 +2,29 @@
 
 	'use strict';
 
-	function AuthenticationService($window, $injector, GenericHTTPCallService) {
-		var userInfo = null,
-			apiCall = GenericHTTPCallService.genericFactory,
+    var app = angular.module('app');
+
+	var AuthenticationService = function(SessionService, GenericHTTPCallService) {
+		var userInfo = {},
+			http = GenericHTTPCallService.genericFactory,
 			authenticatedUser = null,
 			factory = {};
 
 		factory.login = function(payload) {
-			return apiCall('post', 'login', payload);
+			return http('post', 'login', payload);
 		}
 
 		factory.verifyUsername = function(payload) {
-			return apiCall('post', 'verifyUsername', payload);
+			return http('post', 'verifyUsername', payload);
 		}
 
 		factory.register = function(payload) {
-			apiCall('post', 'register', payload);
-			$location.path('/login');
+			return http('post', 'register', payload);
 		};
 
 		factory.getAuthenticatedUser = function() {
 			if (!_.isObject(authenticatedUser)) {
-				authenticatedUser = $window.sessionStorage["authenticatedUser"];
+				authenticatedUser = SessionService.getLocalStorageByKey('authenticatedUser');
 				authenticatedUser = (authenticatedUser) ? JSON.parse(authenticatedUser) : null;
 			}
 
@@ -31,8 +32,8 @@
 		}
 
 		factory.getUserInfo = function() {
-			if (!_.isObject(userInfo)) {
-				userInfo = $window.sessionStorage["userInfo"];
+			if (!userInfo || !userInfo.authToken) {
+				userInfo = SessionService.getSessionStorageByKey["userInfo"];
 				userInfo = (userInfo) ? JSON.parse(userInfo) : null;
 			}
 
@@ -47,8 +48,8 @@
 		return factory;
 	}
 
-	AuthenticationService.$inject = ['$window', '$injector', 'GenericHTTPCallService'];
+	AuthenticationService.$inject = ['SessionService', 'GenericHTTPCallService'];
 
-	presApp.service('AuthenticationService', AuthenticationService);
+	app.service('AuthenticationService', AuthenticationService);
 
 }());

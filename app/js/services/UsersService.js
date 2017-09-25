@@ -1,85 +1,41 @@
 (function() {
 
-    'use strict';
+	'use strict';
 
-    function UsersService($q, $http, $location, $window) {
-        var factory = {};
+    var app = angular.module('app');
 
-        factory.register = function(payload) {
-            var defer = $q.defer();
+	var UsersService = function(GenericHTTPCallService) {
+		var factory = {};
+		var http = GenericHTTPCallService.genericFactory;
 
-            $http.post("register", payload).then(function(result) {
+		factory.register = function(payload) {
+			if (!payload) return null;
+			return http('post', 'register', payload);
+		};
 
-                if (result.errors) {
-                    defer.reject(result.errors);
-                    console.log(result.errors);
-                } else {
-                    defer.resolve(result);
-                    $location.path('/login');
-                }
+		factory.updateUser = function(payload) {
+			if (!payload._id) return null;
+			if (payload.username) delete payload.username;
+			if (payload.password) delete payload.password;
+			return http('put', 'api/v1/user/' + payload._id, payload);
+		};
 
-            });
+		factory.fetchUser = function(payload) {
+			if (!payload._id) return null;
+			if (payload.username) delete payload.username;
+			if (payload.password) delete payload.password;
+			return http('get', 'api/v1/user/' + payload._id, payload);
+		};
 
-            return defer.promise;
-        };
+		factory.verifyLogin = function(payload) {
+            return http('post', 'verifyLogin', payload);
+		};
 
-        factory.updateUser = function(payload) {
-            var defer = $q.defer();
+		return factory;
+	}
 
-            if (payload.username) delete payload.username;
-            if (payload.password) delete payload.password;
-            $http.put("api/v1/user/" + payload._id, payload).then(function(result) {
-                if (result.errors) {
-                    defer.reject(result.errors);
-                    console.log(result.errors);
-                } else {
-                    defer.resolve(result);
-                    console.log(result);
-                }
-            });
+	UsersService.$inject = ['GenericHTTPCallService'];
 
-            return defer.promise;
-        };
-
-        factory.fetchUser = function(payload) {
-            var defer = $q.defer();
-
-            $http.put(payload).then(function(result) {
-
-                if (result.errors) {
-                    defer.reject(result.errors);
-                    console.log(result.errors);
-                } else {
-                    defer.resolve(result);
-                    $location.path('/login');
-                }
-
-            });
-
-            return defer.promise;
-        };
-
-        factory.verifyLogin = function(payload) {
-            var defer = $q.defer();
-            $http.post(payload).then(function(result) {
-                console.log(result);
-
-                if (result && result.errors) {
-                    defer.reject(result.errors);
-                } else {
-                    defer.resolve(result);
-                }
-
-            });
-
-            return defer.promise;
-        };
-
-        return factory;
-    }
-
-    UsersService.$inject = ['$q', '$http', '$location', '$window'];
-
-    presApp.service('UsersService', UsersService);
+	app.service('UsersService', UsersService);
 
 }());

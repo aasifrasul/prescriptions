@@ -1,25 +1,43 @@
 <div class="row">
     <div class="col-lg-12">
-        <h1 class="page-header">Today's Prescriptions
-        <button type="submit" ng-click="create()" class="btn btn-primary pull-right">Create</button>
+        <h1 class="page-header">
+            <span ng-show="vm.displayType != 'All'">{{vm.displayType}}'s Prescriptions</span>
+            <span ng-show="vm.displayType == 'All'">All Prescriptions</span>
+            <button type="submit" ng-click="vm.create()" class="btn btn-primary pull-right">Create</button>
             <!-- <small>It's Nice to Meet You!</small> -->
         </h1>
-        <p>Here is all the Prescriptions for today.</p>
+        <!-- <p>Here is all the Prescriptions for today.</p> -->
+        See more <b>Prescriptions</b>&nbsp;&nbsp;=>&nbsp;&nbsp;
+        <label
+            class="radio-inline"
+            ng-repeat="(key, value) in vm.displayTypes"
+            ng-click="vm.fetchPrescriptions(value);">
+            <input
+                type="radio"
+                name="displayType"
+                ng-checked="vm.displayType == value">
+                <span ng-bind="value"></span>
+        </label>
     </div>
 </div>
+<items-per-page itemsPerPage="5"></items-per-page>
+<pagination-wrapper items-per-page="vm.itemsPerPage" total-items="vm.totalPrescriptions"></pagination-wrapper>
 
 <div class="row">
     <div class="col-lg-12">
         
     </div>
-    <div class="col-lg-3 col-sm-6 text-center" ng-repeat="prescription in prescriptions track by $index">
-        <h3>{{prescription.patient_name}}</h3>
-        <p>{{prescription.age}}</p>
-        <p>{{prescription.gender}}</p>
-        <p>{{prescription.date_time}}</p>
-        <button class="btn btn-primary" type="button" ng-click="detail($index)">Detail</button>
-        <button class="btn btn-primary" type="button" ng-click="editPrescription($index)">Edit</button>
-        <button class="btn btn-warning" type="button" ng-click="deletePrescription($index)">Delete</button>
+    <div class="col-lg-3 col-sm-6 text-center" ng-repeat="p in vm.prescriptions track by $index">
+        <h3 ng-bind="p.patient_name"></h3>
+        <p ng-bind="p.age"></p>
+        <p ng-if="!p.gender">Male</p>
+        <p ng-if="p.gender">Female</p>
+        <p ng-bind="p.date_time"></p>
+        <button class="btn btn-primary" type="button" ng-click="vm.detail($index)">Detail</button>
+        <button class="btn btn-primary" type="button" ng-click="vm.edit($index)">Edit</button>
+        <button class="btn btn-warning" type="button" ng-click="vm.delete($index)">Delete</button>
     </div>
 
 </div>
+
+<pagination-wrapper items-per-page="vm.itemsPerPage" total-items="vm.totalPrescriptions"></pagination-wrapper>

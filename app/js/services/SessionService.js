@@ -2,6 +2,8 @@
 
 	'use strict';
 
+    var app = angular.module('app');
+
 	function SessionService($window, $rootScope, StorageService) {
 		var self = this;
 		var factory = {};
@@ -73,6 +75,7 @@
 		};
 
 		this.destroy = function() {
+			user = {};
 			session = {};
 
 			StorageService.del("session");
@@ -85,6 +88,6 @@
 
 	SessionService.$inject = ['$window', '$rootScope', 'StorageService'];
 
-	presApp.service('SessionService', SessionService);
+	app.service('SessionService', SessionService);
 
 }());
